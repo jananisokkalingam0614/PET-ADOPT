@@ -1,0 +1,589 @@
+// seed.js — Seeds database with 50 pets with real photos
+const mongoose = require('mongoose');
+const bcrypt   = require('bcryptjs');
+require('dotenv').config();
+
+const User        = require('./models/User');
+const Pet         = require('./models/Pet');
+const Application = require('./models/Application');
+
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/pawshome';
+
+const USERS = [
+  { name:'Admin User',    email:'admin@pawshome.com', password:'admin123',    role:'admin', phone:'555-0100' },
+  { name:'Sarah Johnson', email:'sarah@example.com',  password:'password123', role:'user',  phone:'555-0101', address:{street:'123 Oak St',city:'Austin',state:'TX',zip:'78701'} },
+  { name:'Mike Chen',     email:'mike@example.com',   password:'password123', role:'user',  phone:'555-0102', address:{street:'456 Maple Ave',city:'Portland',state:'OR',zip:'97201'} },
+  { name:'Emily Davis',   email:'emily@example.com',  password:'password123', role:'user',  phone:'555-0103', address:{street:'789 Pine Rd',city:'Chicago',state:'IL',zip:'60601'} },
+  { name:'James Wilson',  email:'james@example.com',  password:'password123', role:'user',  phone:'555-0104', address:{street:'321 Elm St',city:'Houston',state:'TX',zip:'77001'} },
+];
+
+const PETS = [
+  // ── DOGS ──────────────────────────────────────────────────
+  {
+    name:'Buddy', species:'dog', breed:'Golden Retriever',
+    age:{value:2,unit:'years'}, gender:'male', size:'large',
+    location:{city:'Austin',state:'TX'},
+    description:'Buddy is a cheerful Golden Retriever who loves fetch and swimming. Fully trained, great with kids and other dogs.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['friendly','playful','good with kids','trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1601979031925-424e53b6caaa?w=600'
+  },
+  {
+    name:'Max', species:'dog', breed:'Labrador Retriever',
+    age:{value:3,unit:'years'}, gender:'male', size:'large',
+    location:{city:'Denver',state:'CO'},
+    description:'Max is a loyal and energetic Lab who loves outdoor adventures. He is house-trained and knows basic commands.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','friendly','trained','house-trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600'
+  },
+  {
+    name:'Rocky', species:'dog', breed:'German Shepherd',
+    age:{value:4,unit:'years'}, gender:'male', size:'large',
+    location:{city:'Phoenix',state:'AZ'},
+    description:'Rocky is an intelligent and loyal German Shepherd. Fully trained and protective. Best for experienced owners.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','trained','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=600'
+  },
+  {
+    name:'Bella', species:'dog', breed:'Beagle',
+    age:{value:2,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'Nashville',state:'TN'},
+    description:'Bella is a sweet Beagle who loves sniffing trails and playing fetch. Leash trained and great with everyone.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','friendly','trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=600'
+  },
+  {
+    name:'Charlie', species:'dog', breed:'French Bulldog',
+    age:{value:1,unit:'years'}, gender:'male', size:'small',
+    location:{city:'New York',state:'NY'},
+    description:'Charlie is an adorable French Bulldog with a big personality. Perfect for apartment living. Very affectionate.',
+    health:{vaccinated:true,spayedNeutered:false,microchipped:true},
+    traits:['calm','affectionate','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600'
+  },
+  {
+    name:'Luna', species:'dog', breed:'Siberian Husky',
+    age:{value:2,unit:'years'}, gender:'female', size:'large',
+    location:{city:'Seattle',state:'WA'},
+    description:'Luna is a stunning Husky who loves cold weather and long runs. Needs an active family with a yard.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','playful','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?w=600'
+  },
+  {
+    name:'Cooper', species:'dog', breed:'Cocker Spaniel',
+    age:{value:3,unit:'years'}, gender:'male', size:'medium',
+    location:{city:'Atlanta',state:'GA'},
+    description:'Cooper is a gentle Cocker Spaniel who loves cuddles and gentle play. Great with children and seniors.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','good with kids'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600'
+  },
+  {
+    name:'Daisy', species:'dog', breed:'Poodle',
+    age:{value:4,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'Miami',state:'FL'},
+    description:'Daisy is an elegant standard Poodle who is hypoallergenic and highly intelligent. Loves learning tricks.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['friendly','trained','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1598133894008-61f7fdb8cc3a?w=600'
+  },
+  {
+    name:'Bear', species:'dog', breed:'Bernese Mountain Dog',
+    age:{value:1,unit:'years'}, gender:'male', size:'extra-large',
+    location:{city:'Portland',state:'OR'},
+    description:'Bear is a fluffy giant who is incredibly gentle and loves children. He is still a puppy and needs training.',
+    health:{vaccinated:true,spayedNeutered:false,microchipped:true},
+    traits:['friendly','playful','good with kids'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=600'
+  },
+  {
+    name:'Molly', species:'dog', breed:'Border Collie',
+    age:{value:3,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'Dallas',state:'TX'},
+    description:'Molly is a super intelligent Border Collie who needs mental stimulation. Perfect for active families or farms.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','trained','playful'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1503256207526-0d5523f31580?w=600'
+  },
+  {
+    name:'Zeus', species:'dog', breed:'Rottweiler',
+    age:{value:5,unit:'years'}, gender:'male', size:'extra-large',
+    location:{city:'Chicago',state:'IL'},
+    description:'Zeus is a calm and well-trained Rottweiler. Very loyal to his family. Best for experienced dog owners.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','trained','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1567752881298-894bb81f9379?w=600'
+  },
+  {
+    name:'Sadie', species:'dog', breed:'Australian Shepherd',
+    age:{value:2,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'San Francisco',state:'CA'},
+    description:'Sadie is a stunning Aussie with gorgeous merle coat. She loves agility training and outdoor adventures.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','trained','playful'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?w=600'
+  },
+  {
+    name:'Duke', species:'dog', breed:'Boxer',
+    age:{value:3,unit:'years'}, gender:'male', size:'large',
+    location:{city:'Philadelphia',state:'PA'},
+    description:'Duke is a playful and loyal Boxer who loves kids. He is full of energy and always ready to play.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['playful','friendly','good with kids'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=600'
+  },
+  {
+    name:'Chloe', species:'dog', breed:'Shih Tzu',
+    age:{value:6,unit:'years'}, gender:'female', size:'small',
+    location:{city:'Las Vegas',state:'NV'},
+    description:'Chloe is a calm and loving Shih Tzu. She loves being pampered and sitting on laps. Great for seniors.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1535268647677-300dbf3d78d1?w=600'
+  },
+  {
+    name:'Ranger', species:'dog', breed:'Labrador Mix',
+    age:{value:8,unit:'months'}, gender:'male', size:'medium',
+    location:{city:'Houston',state:'TX'},
+    description:'Ranger is a playful Lab mix puppy who loves everyone. He is still learning but picks up commands fast.',
+    health:{vaccinated:true,spayedNeutered:false,microchipped:false},
+    traits:['playful','energetic','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600'
+  },
+  {
+    name:'Penny', species:'dog', breed:'Dachshund',
+    age:{value:4,unit:'years'}, gender:'female', size:'small',
+    location:{city:'Boston',state:'MA'},
+    description:'Penny is a curious and brave little Dachshund. She loves exploring and cuddling after a long day.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['friendly','playful','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600'
+  },
+  {
+    name:'Thor', species:'dog', breed:'Great Dane',
+    age:{value:2,unit:'years'}, gender:'male', size:'extra-large',
+    location:{city:'Minneapolis',state:'MN'},
+    description:'Thor is a gentle giant Great Dane. Despite his size he is very calm and loves children. Needs a big home.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','friendly','good with kids'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600'
+  },
+  {
+    name:'Rosie', species:'dog', breed:'Cavalier King Charles',
+    age:{value:3,unit:'years'}, gender:'female', size:'small',
+    location:{city:'San Diego',state:'CA'},
+    description:'Rosie is an affectionate Cavalier who loves cuddles. She gets along with cats and dogs. Perfect lap dog.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','good with cats','good with dogs'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1552053831-71594a27632d?w=600'
+  },
+
+  // ── CATS ───────────────────────────────────────────────────
+  {
+    name:'Whiskers', species:'cat', breed:'Maine Coon',
+    age:{value:4,unit:'years'}, gender:'male', size:'large',
+    location:{city:'Seattle',state:'WA'},
+    description:'Whiskers is a majestic Maine Coon with silky fur. He loves sunny spots and gentle chin scratches.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1574158622682-e40e69881006?w=600'
+  },
+  {
+    name:'Mittens', species:'cat', breed:'Persian',
+    age:{value:5,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'Miami',state:'FL'},
+    description:'Mittens is a beautiful Persian who loves being brushed and watching TV. Indoor only, prefers quiet homes.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600'
+  },
+  {
+    name:'Oliver', species:'cat', breed:'British Shorthair',
+    age:{value:3,unit:'years'}, gender:'male', size:'medium',
+    location:{city:'Chicago',state:'IL'},
+    description:'Oliver is a chunky British Shorthair with a teddy bear face. He is calm, loving and very easy to care for.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600'
+  },
+  {
+    name:'Luna', species:'cat', breed:'Siamese',
+    age:{value:2,unit:'years'}, gender:'female', size:'small',
+    location:{city:'Los Angeles',state:'CA'},
+    description:'Luna is a vocal and affectionate Siamese who loves attention. She will follow you everywhere and chat all day.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['affectionate','playful','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1555304334-e3d94c0e6b88?w=600'
+  },
+  {
+    name:'Simba', species:'cat', breed:'Tabby',
+    age:{value:1,unit:'years'}, gender:'male', size:'small',
+    location:{city:'Phoenix',state:'AZ'},
+    description:'Simba is a playful orange tabby kitten who loves toys and climbing. He gets along with other cats.',
+    health:{vaccinated:true,spayedNeutered:false,microchipped:false},
+    traits:['playful','energetic','good with cats'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=600'
+  },
+  {
+    name:'Nala', species:'cat', breed:'Ragdoll',
+    age:{value:3,unit:'years'}, gender:'female', size:'large',
+    location:{city:'Denver',state:'CO'},
+    description:'Nala is a gorgeous Ragdoll who goes limp when you pick her up. She is super gentle and loves being held.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','good with kids'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1561948955-570b270e7c36?w=600'
+  },
+  {
+    name:'Shadow', species:'cat', breed:'Domestic Shorthair',
+    age:{value:6,unit:'years'}, gender:'male', size:'medium',
+    location:{city:'Portland',state:'OR'},
+    description:'Shadow is a sleek black cat who is shy at first but becomes very loving. He loves cozy spots and fish treats.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','independent','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600'
+  },
+  {
+    name:'Cleo', species:'cat', breed:'Egyptian Mau',
+    age:{value:2,unit:'years'}, gender:'female', size:'small',
+    location:{city:'Houston',state:'TX'},
+    description:'Cleo is a spotted Egyptian Mau who is one of the fastest cat breeds. She loves interactive play and laser toys.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','playful','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1596854407944-bf87f6fdd049?w=600'
+  },
+  {
+    name:'Tiger', species:'cat', breed:'Bengal',
+    age:{value:4,unit:'years'}, gender:'male', size:'medium',
+    location:{city:'Atlanta',state:'GA'},
+    description:'Tiger is a wild-looking Bengal with a heart of gold. He loves water, fetch and climbing cat trees.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','playful','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1568043434006-be48574b9da5?w=600'
+  },
+  {
+    name:'Misty', species:'cat', breed:'Russian Blue',
+    age:{value:5,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'Boston',state:'MA'},
+    description:'Misty is a beautiful Russian Blue with bright green eyes. She is gentle, quiet and bonds deeply with one person.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','independent','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=600'
+  },
+  {
+    name:'Ginger', species:'cat', breed:'Domestic Longhair',
+    age:{value:7,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'Nashville',state:'TN'},
+    description:'Ginger is a sweet senior cat who loves lap time and warm blankets. She is fully litter trained and very low maintenance.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','affectionate','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1518791841217-8f162f1912da?w=600'
+  },
+
+  // ── RABBITS ────────────────────────────────────────────────
+  {
+    name:'Snowball', species:'rabbit', breed:'Holland Lop',
+    age:{value:1,unit:'years'}, gender:'female', size:'small',
+    location:{city:'Chicago',state:'IL'},
+    description:'Snowball is a fluffy white Holland Lop with floppy ears. Litter trained and very social. Loves veggies.',
+    health:{vaccinated:false,spayedNeutered:true,microchipped:false},
+    traits:['calm','friendly','house-trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600'
+  },
+  {
+    name:'Thumper', species:'rabbit', breed:'Netherland Dwarf',
+    age:{value:2,unit:'years'}, gender:'male', size:'small',
+    location:{city:'San Francisco',state:'CA'},
+    description:'Thumper is a tiny Netherland Dwarf who loves to binky and explore. He is litter trained and very curious.',
+    health:{vaccinated:false,spayedNeutered:true,microchipped:false},
+    traits:['playful','friendly','house-trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=600'
+  },
+  {
+    name:'Cinnamon', species:'rabbit', breed:'Mini Rex',
+    age:{value:3,unit:'years'}, gender:'female', size:'small',
+    location:{city:'Dallas',state:'TX'},
+    description:'Cinnamon has the softest fur you will ever touch. She loves being petted and will nudge your hand for more.',
+    health:{vaccinated:false,spayedNeutered:true,microchipped:false},
+    traits:['calm','affectionate','house-trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600'
+  },
+  {
+    name:'Pepper', species:'rabbit', breed:'Lionhead',
+    age:{value:1,unit:'years'}, gender:'male', size:'small',
+    location:{city:'Portland',state:'OR'},
+    description:'Pepper has a gorgeous mane like a little lion. He is playful and loves to hop around his space.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['playful','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1474511320723-9a56873867b5?w=600'
+  },
+  {
+    name:'Clover', species:'rabbit', breed:'Flemish Giant',
+    age:{value:2,unit:'years'}, gender:'female', size:'large',
+    location:{city:'Minneapolis',state:'MN'},
+    description:'Clover is a giant gentle rabbit who loves to sprawl out and be brushed. She is incredibly calm and sweet.',
+    health:{vaccinated:false,spayedNeutered:true,microchipped:false},
+    traits:['calm','affectionate','house-trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600'
+  },
+
+  // ── BIRDS ──────────────────────────────────────────────────
+  {
+    name:'Tweety', species:'bird', breed:'Canary',
+    age:{value:2,unit:'years'}, gender:'male', size:'small',
+    location:{city:'New York',state:'NY'},
+    description:'Tweety is a bright yellow canary with a beautiful singing voice. He will fill your home with cheerful songs.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['calm','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600'
+  },
+  {
+    name:'Polly', species:'bird', breed:'African Grey Parrot',
+    age:{value:5,unit:'years'}, gender:'female', size:'medium',
+    location:{city:'Los Angeles',state:'CA'},
+    description:'Polly is a highly intelligent African Grey who can speak over 50 words. She needs lots of mental stimulation.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['affectionate','independent','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600'
+  },
+  {
+    name:'Rio', species:'bird', breed:'Macaw',
+    age:{value:4,unit:'years'}, gender:'male', size:'large',
+    location:{city:'Miami',state:'FL'},
+    description:'Rio is a stunning blue and gold Macaw. Very social and loves being the center of attention. Needs experienced owner.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['friendly','playful','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600'
+  },
+  {
+    name:'Kiwi', species:'bird', breed:'Budgerigar',
+    age:{value:1,unit:'years'}, gender:'male', size:'small',
+    location:{city:'Austin',state:'TX'},
+    description:'Kiwi is a cheerful budgie who loves to chirp and play with toys. Great starter bird for beginners.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['playful','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600'
+  },
+  {
+    name:'Mango', species:'bird', breed:'Cockatiel',
+    age:{value:3,unit:'years'}, gender:'female', size:'small',
+    location:{city:'San Diego',state:'CA'},
+    description:'Mango is a sweet cockatiel who loves to whistle tunes and sit on shoulders. Very affectionate and easy to tame.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['calm','affectionate','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600'
+  },
+
+  // ── HAMSTERS ───────────────────────────────────────────────
+  {
+    name:'Hammy', species:'hamster', breed:'Syrian Hamster',
+    age:{value:6,unit:'months'}, gender:'male', size:'small',
+    location:{city:'Boston',state:'MA'},
+    description:'Hammy is a fluffy golden Syrian hamster who loves running on his wheel and hiding treats. Perfect starter pet.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['friendly','playful'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=600'
+  },
+  {
+    name:'Nugget', species:'hamster', breed:'Dwarf Hamster',
+    age:{value:4,unit:'months'}, gender:'female', size:'small',
+    location:{city:'Philadelphia',state:'PA'},
+    description:'Nugget is a tiny dwarf hamster who is incredibly fast and funny to watch. Great for kids who want a first pet.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['playful','energetic'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=600'
+  },
+  {
+    name:'Peanut', species:'hamster', breed:'Roborovski Hamster',
+    age:{value:5,unit:'months'}, gender:'male', size:'small',
+    location:{city:'Las Vegas',state:'NV'},
+    description:'Peanut is the smallest and fastest hamster you will ever see. Fun to watch, loves tunnels and sand baths.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['playful','energetic'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=600'
+  },
+
+  // ── GUINEA PIGS ────────────────────────────────────────────
+  {
+    name:'Biscuit', species:'guinea pig', breed:'American Guinea Pig',
+    age:{value:1,unit:'years'}, gender:'male', size:'small',
+    location:{city:'Atlanta',state:'GA'},
+    description:'Biscuit loves to wheek loudly when he hears the fridge open. Very social and loves being held and petted.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['friendly','affectionate'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=600'
+  },
+  {
+    name:'Caramel', species:'guinea pig', breed:'Teddy Guinea Pig',
+    age:{value:2,unit:'years'}, gender:'female', size:'small',
+    location:{city:'Minneapolis',state:'MN'},
+    description:'Caramel has soft teddy-like fur and a very gentle personality. She loves fresh herbs and lap time.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['calm','affectionate','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=600'
+  },
+  {
+    name:'Fluffy', species:'guinea pig', breed:'Peruvian Guinea Pig',
+    age:{value:1,unit:'years'}, gender:'male', size:'small',
+    location:{city:'Dallas',state:'TX'},
+    description:'Fluffy has incredibly long silky hair that needs regular grooming. He is very calm and loves vegetables.',
+    health:{vaccinated:false,spayedNeutered:false,microchipped:false},
+    traits:['calm','friendly'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4a?w=600'
+  },
+
+  // ── MORE DOGS ──────────────────────────────────────────────
+  {
+    name:'Ace', species:'dog', breed:'Dalmatian',
+    age:{value:2,unit:'years'}, gender:'male', size:'large',
+    location:{city:'San Francisco',state:'CA'},
+    description:'Ace is a spotted Dalmatian who loves to run and play. Very energetic and needs lots of daily exercise.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','friendly','playful'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600'
+  },
+  {
+    name:'Lola', species:'dog', breed:'Chihuahua',
+    age:{value:4,unit:'years'}, gender:'female', size:'small',
+    location:{city:'San Antonio',state:'TX'},
+    description:'Lola is a feisty little Chihuahua with a big personality. She is very loyal and loves her owner fiercely.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['energetic','affectionate','independent'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=600'
+  },
+  {
+    name:'Bruno', species:'dog', breed:'Basset Hound',
+    age:{value:5,unit:'years'}, gender:'male', size:'medium',
+    location:{city:'New Orleans',state:'LA'},
+    description:'Bruno is a droopy-eared Basset Hound who loves slow walks and long naps. Very calm and great with kids.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['calm','friendly','good with kids'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=600'
+  },
+  {
+    name:'Stella', species:'dog', breed:'Pitbull Mix',
+    age:{value:3,unit:'years'}, gender:'female', size:'large',
+    location:{city:'Detroit',state:'MI'},
+    description:'Stella is a sweet and misunderstood Pitbull mix who loves belly rubs and cuddles. Great with adults.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['friendly','affectionate','energetic'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1561948955-570b270e7c36?w=600'
+  },
+  {
+    name:'Archie', species:'dog', breed:'Miniature Schnauzer',
+    age:{value:2,unit:'years'}, gender:'male', size:'small',
+    location:{city:'Charlotte',state:'NC'},
+    description:'Archie is a smart and spunky Miniature Schnauzer with a great beard. He is hypoallergenic and loves to play.',
+    health:{vaccinated:true,spayedNeutered:true,microchipped:true},
+    traits:['playful','friendly','trained'],
+    status:'available',
+    primaryImage:'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=600'
+  },
+];
+
+const seed = async () => {
+  try {
+    console.log('\n Connecting...');
+    await mongoose.connect(MONGO_URI);
+    console.log(' Connected!');
+
+    console.log(' Old data cleared.');
+    await Promise.all([User.deleteMany(), Pet.deleteMany(), Application.deleteMany()]);
+
+    console.log(' Users created.');
+    const createdUsers = [];
+    for (const u of USERS) {
+      const hashed = await bcrypt.hash(u.password, 10);
+      createdUsers.push(await User.create({ ...u, password: hashed }));
+    }
+
+    const admin = createdUsers.find(u => u.role === 'admin');
+
+    console.log(' Pets created.');
+    const createdPets = await Pet.insertMany(PETS.map(p => ({ ...p, addedBy: admin._id })));
+
+    console.log(' Sample application created.');
+    const user = createdUsers.find(u => u.email === 'sarah@example.com');
+    const pet  = createdPets[0];
+
+    await Application.create({
+      pet: pet._id, applicant: user._id,
+      personalInfo: { fullName: user.name, email: user.email, phone: '555-0101', address: { street: '123 Oak St', city: 'Austin', state: 'TX', zip: '78701' } },
+      homeEnvironment: { housingType: 'house', hasYard: true, isRenting: false, landlordAllowsPets: true, numberOfAdults: 2, numberOfChildren: 1, childrenAges: '8' },
+      petExperience: { hasPetsNow: false, currentPets: '', previousExperience: 'I grew up with dogs and know how to care for them.', hoursAlonePerDay: 4, veterinarianName: 'Dr. Smith Animal Clinic' },
+      whyAdopt: `I love ${pet.name} and want to give them a forever home. I work from home and have a big yard.`,
+      agreements: { agreeToVisit: true, agreeToFees: true, agreeToResponsibility: true },
+      status: 'pending'
+    });
+
+    console.log(`
+ =============================================
+  Database seeded successfully!
+  50 Pets added with photos!
+ =============================================
+  ADMIN:  admin@pawshome.com / admin123
+  USER:   sarah@example.com / password123
+ =============================================
+`);
+  } catch (err) {
+    console.error(' Error:', err.message);
+  } finally {
+    await mongoose.disconnect();
+    console.log(' Done.\n');
+    process.exit(0);
+  }
+};
+
+seed();

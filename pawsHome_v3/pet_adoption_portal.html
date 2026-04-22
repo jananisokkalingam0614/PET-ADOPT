@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PawsHome — Find Your Forever Friend</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #faf6f0;
+  --warm: #f5ede0;
+  --orange: #e8621a;
+  --orange-light: #f08040;
+  --orange-pale: #fde9d7;
+  --teal: #1a6e72;
+  --teal-light: #2a9298;
+  --teal-pale: #d4eced;
+  --charcoal: #1c1c1e;
+  --gray: #5a5a5a;
+  --gray-light: #9a9a9a;
+  --border: #e2d8cc;
+  --white: #ffffff;
+  --green: #2d7a4f;
+  --red: #c0392b;
+  --yellow: #d4850a;
+  --shadow: 0 4px 24px rgba(28,28,30,0.08);
+  --shadow-lg: 0 12px 48px rgba(28,28,30,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh;overflow-x:hidden}
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--warm)}
+::-webkit-scrollbar-thumb{background:var(--orange);border-radius:4px}
+/* ─── NAV ─── */
+nav{position:fixed;top:0;width:100%;z-index:1000;background:rgba(250,246,240,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;height:68px;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:900;color:var(--orange);letter-spacing:-0.5px;cursor:pointer}
+.nav-logo span{color:var(--teal)}
+.nav-links{display:flex;gap:0.5rem;align-items:center}
+.nav-btn{padding:0.5rem 1.1rem;border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all 0.2s}
+.nav-btn.ghost{background:transparent;color:var(--charcoal)}
+.nav-btn.ghost:hover{background:var(--warm)}
+.nav-btn.solid{background:var(--orange);color:#fff}
+.nav-btn.solid:hover{background:var(--orange-light)}
+.nav-btn.teal{background:var(--teal);color:#fff}
+.nav-btn.teal:hover{background:var(--teal-light)}
+.nav-user{display:flex;align-items:center;gap:0.5rem;font-size:0.85rem;font-weight:500}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.8rem}
+/* ─── PAGES ─── */
+.page{display:none;padding-top:68px;min-height:100vh}
+.page.active{display:block}
+/* ─── HERO ─── */
+.hero{background:linear-gradient(135deg,#1c1c1e 0%,#2d1810 50%,#1a3d3f 100%);min-height:calc(100vh - 68px);display:grid;place-items:center;position:relative;overflow:hidden;padding:4rem 2rem}
+.hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.hero-paws{position:absolute;font-size:8rem;opacity:0.04;top:10%;right:5%}
+.hero-content{text-align:center;max-width:760px;position:relative;z-index:1}
+.hero-badge{display:inline-block;background:rgba(232,98,26,0.2);border:1px solid rgba(232,98,26,0.4);color:var(--orange-light);padding:0.4rem 1rem;border-radius:50px;font-size:0.78rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:1.5rem}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:900;color:#fff;line-height:1.05;margin-bottom:1.2rem}
+.hero h1 em{color:var(--orange-light);font-style:normal}
+.hero p{font-size:1.15rem;color:rgba(255,255,255,0.7);max-width:520px;margin:0 auto 2.5rem;line-height:1.7}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 2rem;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;cursor:pointer;border:none;transition:all 0.25s;text-decoration:none}
+.btn-primary{background:var(--orange);color:#fff;box-shadow:0 4px 20px rgba(232,98,26,0.4)}
+.btn-primary:hover{background:var(--orange-light);transform:translateY(-2px);box-shadow:0 8px 28px rgba(232,98,26,0.5)}
+.btn-outline{background:transparent;color:#fff;border:2px solid rgba(255,255,255,0.4)}
+.btn-outline:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.7)}
+.btn-teal{background:var(--teal);color:#fff;box-shadow:0 4px 20px rgba(26,110,114,0.4)}
+.btn-teal:hover{background:var(--teal-light);transform:translateY(-2px)}
+.btn-sm{padding:0.5rem 1.2rem;font-size:0.82rem}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:3.5rem;padding-top:2.5rem;border-top:1px solid rgba(255,255,255,0.1)}
+.stat{text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;color:var(--orange-light)}
+.stat-label{font-size:0.78rem;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:1px;margin-top:0.2rem}
+/* ─── SECTION ─── */
+.section{padding:5rem 2rem}
+.section-header{text-align:center;margin-bottom:3rem}
+.section-header h2{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;margin-bottom:0.6rem}
+.section-header p{color:var(--gray);font-size:1rem;max-width:500px;margin:0 auto}
+/* ─── SPECIES PILLS ─── */
+.species-bar{display:flex;gap:0.7rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
+.sp-pill{padding:0.5rem 1.2rem;border-radius:50px;border:2px solid var(--border);background:#fff;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all 0.2s}
+.sp-pill:hover,.sp-pill.active{background:var(--orange);border-color:var(--orange);color:#fff}
+/* ─── SEARCH BAR ─── */
+.search-wrap{max-width:700px;margin:0 auto 2rem;background:#fff;border-radius:16px;border:2px solid var(--border);padding:1rem 1.2rem;display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;box-shadow:var(--shadow)}
+.search-wrap input,.search-wrap select{border:none;outline:none;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--charcoal);background:transparent;flex:1;min-width:140px}
+.search-wrap select{cursor:pointer}
+.search-divider{width:1px;height:24px;background:var(--border)}
+/* ─── PET GRID ─── */
+.pet-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;max-width:1300px;margin:0 auto}
+.pet-card{background:#fff;border-radius:20px;overflow:hidden;box-shadow:var(--shadow);transition:all 0.3s;cursor:pointer;position:relative}
+.pet-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.pet-card-img{position:relative;height:200px;overflow:hidden}
+.pet-card-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
+.pet-card:hover .pet-card-img img{transform:scale(1.06)}
+.pet-status-badge{position:absolute;top:12px;left:12px;padding:0.3rem 0.8rem;border-radius:50px;font-size:0.72rem;font-weight:700;letter-spacing:0.5px;text-transform:uppercase}
+.status-available{background:#dcfce7;color:#166534}
+.status-pending{background:#fef9c3;color:#854d0e}
+.status-adopted{background:#f1f5f9;color:#64748b}
+.fav-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.95);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all 0.2s}
+.fav-btn:hover,.fav-btn.active{background:#fff;transform:scale(1.15)}
+.pet-card-body{padding:1.2rem}
+.pet-name{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;margin-bottom:0.25rem}
+.pet-meta{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.7rem}
+.pet-tag{background:var(--warm);color:var(--gray);padding:0.2rem 0.6rem;border-radius:50px;font-size:0.72rem;font-weight:500}
+.pet-tag.species{background:var(--orange-pale);color:var(--orange)}
+.pet-tag.age{background:var(--teal-pale);color:var(--teal)}
+.pet-location{font-size:0.8rem;color:var(--gray-light);display:flex;align-items:center;gap:0.3rem}
+.pet-card-footer{padding:0.9rem 1.2rem;border-top:1px solid var(--border);display:flex;gap:0.5rem;justify-content:space-between;align-items:center}
+/* ─── PET DETAIL MODAL ─── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:2000;background:rgba(28,28,30,0.6);backdrop-filter:blur(6px);padding:1rem;overflow-y:auto}
+.modal-overlay.open{display:flex;align-items:flex-start;justify-content:center;padding-top:80px}
+.modal{background:#fff;border-radius:24px;max-width:900px;width:100%;box-shadow:var(--shadow-lg);overflow:hidden;animation:modalIn 0.3s ease}
+@keyframes modalIn{from{transform:translateY(20px) scale(0.97);opacity:0}to{transform:none;opacity:1}}
+.modal-close{position:absolute;top:1rem;right:1rem;width:36px;height:36px;border-radius:50%;background:rgba(28,28,30,0.6);border:none;color:#fff;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10}
+.modal-img{position:relative;height:360px}
+.modal-img img{width:100%;height:100%;object-fit:cover}
+.modal-body{padding:2rem}
+.modal-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1.5rem}
+.modal-title{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900}
+.modal-badges{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem}
+.modal-section{margin-bottom:1.5rem}
+.modal-section h4{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--gray-light);margin-bottom:0.7rem}
+.traits-list{display:flex;gap:0.5rem;flex-wrap:wrap}
+.trait-chip{background:var(--warm);color:var(--charcoal);padding:0.3rem 0.8rem;border-radius:50px;font-size:0.8rem;font-weight:500}
+.health-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem}
+.health-item{display:flex;align-items:center;gap:0.5rem;font-size:0.88rem}
+.health-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot-yes{background:var(--green)}
+.dot-no{background:var(--border)}
+/* ─── ADOPTION FORM ─── */
+.form-page{max-width:760px;margin:0 auto;padding:2rem}
+.form-card{background:#fff;border-radius:24px;padding:2.5rem;box-shadow:var(--shadow)}
+.form-header{margin-bottom:2rem}
+.form-header h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;margin-bottom:0.4rem}
+.form-header p{color:var(--gray);font-size:0.9rem}
+.form-section{margin-bottom:2rem}
+.form-section-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--orange);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:2px solid var(--orange-pale)}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem}
+.form-group{display:flex;flex-direction:column;gap:0.4rem}
+.form-group label{font-size:0.82rem;font-weight:600;color:var(--charcoal)}
+.form-group input,.form-group select,.form-group textarea{padding:0.7rem 1rem;border:2px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.9rem;color:var(--charcoal);outline:none;transition:border-color 0.2s;background:#fff}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--orange)}
+.form-group textarea{resize:vertical;min-height:90px}
+.form-check{display:flex;align-items:flex-start;gap:0.7rem;padding:0.8rem;background:var(--warm);border-radius:10px}
+.form-check input[type="checkbox"]{width:18px;height:18px;accent-color:var(--orange);flex-shrink:0;margin-top:2px}
+.form-check label{font-size:0.85rem;line-height:1.5;color:var(--charcoal);cursor:pointer}
+.form-actions{display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem;flex-wrap:wrap}
+/* ─── ADMIN ─── */
+.admin-layout{max-width:1200px;margin:0 auto;padding:2rem}
+.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem}
+.admin-header h1{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900}
+.admin-tabs{display:flex;gap:0.5rem;margin-bottom:2rem;background:var(--warm);padding:0.4rem;border-radius:12px;width:fit-content}
+.admin-tab{padding:0.6rem 1.4rem;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;background:transparent;color:var(--gray)}
+.admin-tab.active{background:#fff;color:var(--charcoal);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:#fff;border-radius:16px;padding:1.4rem;box-shadow:var(--shadow)}
+.stat-card .num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;margin-bottom:0.2rem}
+.stat-card .label{font-size:0.78rem;color:var(--gray-light);text-transform:uppercase;letter-spacing:1px}
+.stat-card.orange .num{color:var(--orange)}
+.stat-card.teal .num{color:var(--teal)}
+.stat-card.green .num{color:var(--green)}
+.stat-card.yellow .num{color:var(--yellow)}
+/* ─── TABLE ─── */
+.table-wrap{background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--warm);font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray);padding:1rem 1.2rem;text-align:left}
+td{padding:0.9rem 1.2rem;border-bottom:1px solid var(--border);font-size:0.88rem;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--cream)}
+.status-pill{display:inline-block;padding:0.25rem 0.7rem;border-radius:50px;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.pill-pending{background:#fef9c3;color:#854d0e}
+.pill-reviewing{background:#dbeafe;color:#1e40af}
+.pill-approved{background:#dcfce7;color:#166534}
+.pill-rejected{background:#fee2e2;color:#991b1b}
+.pill-available{background:#dcfce7;color:#166534}
+.pill-adopted{background:#f1f5f9;color:#64748b}
+/* ─── AUTH MODAL ─── */
+.auth-card{background:#fff;border-radius:24px;max-width:440px;width:100%;padding:2.5rem;box-shadow:var(--shadow-lg);animation:modalIn 0.3s ease}
+.auth-card h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;margin-bottom:0.4rem}
+.auth-card p{color:var(--gray);font-size:0.88rem;margin-bottom:1.5rem}
+.auth-switch{text-align:center;margin-top:1.2rem;font-size:0.85rem;color:var(--gray)}
+.auth-switch a{color:var(--orange);font-weight:600;cursor:pointer;text-decoration:none}
+.auth-switch a:hover{text-decoration:underline}
+/* ─── TOAST ─── */
+.toast-container{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:0.5rem}
+.toast{background:var(--charcoal);color:#fff;padding:0.8rem 1.4rem;border-radius:12px;font-size:0.85rem;font-weight:500;box-shadow:var(--shadow-lg);animation:toastIn 0.3s ease;display:flex;align-items:center;gap:0.6rem}
+@keyframes toastIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+.toast.info{background:var(--teal)}
+/* ─── MISC ─── */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--gray-light)}
+.empty-state .icon{font-size:3rem;margin-bottom:1rem}
+.empty-state h3{font-size:1.1rem;color:var(--gray);margin-bottom:0.4rem}
+.divider{height:1px;background:var(--border);margin:1.5rem 0}
+.text-center{text-align:center}
+.mt-1{margin-top:0.5rem}
+.mt-2{margin-top:1rem}
+.color-orange{color:var(--orange)}
+.color-teal{color:var(--teal)}
+.pagination{display:flex;gap:0.4rem;justify-content:center;margin-top:2rem}
+.page-btn{width:38px;height:38px;border-radius:8px;border:2px solid var(--border);background:#fff;cursor:pointer;font-weight:600;font-size:0.85rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center}
+.page-btn:hover,.page-btn.active{background:var(--orange);border-color:var(--orange);color:#fff}
+.no-pets-msg{text-align:center;padding:3rem;color:var(--gray);grid-column:1/-1}
+/* ─── HOVER PET IMAGE QUICK VIEW ─── */
+.pet-desc-preview{font-size:0.82rem;color:var(--gray);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* ─── ACTION BTNS IN TABLE ─── */
+.action-btns{display:flex;gap:0.4rem}
+.action-btn{padding:0.3rem 0.7rem;border:none;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.action-btn.approve{background:#dcfce7;color:#166534}
+.action-btn.reject{background:#fee2e2;color:#991b1b}
+.action-btn.review{background:#dbeafe;color:#1e40af}
+.action-btn.view{background:var(--warm);color:var(--charcoal)}
+.action-btn:hover{filter:brightness(0.92);transform:scale(1.04)}
+/* RESPONSIVE */
+@media(max-width:640px){.hero-stats{flex-wrap:wrap;gap:1.5rem}.nav-links .nav-btn:not(.solid):not(.teal){display:none}.modal-img{height:220px}}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav id="mainNav">
+  <div class="nav-logo" onclick="showPage('home')">Paws<span>Home</span></div>
+  <div class="nav-links" id="navLinks">
+    <button class="nav-btn ghost" onclick="showPage('browse')">Browse Pets</button>
+    <div id="navGuest" style="display:flex;gap:0.5rem">
+      <button class="nav-btn ghost" onclick="openAuth('login')">Sign In</button>
+      <button class="nav-btn solid" onclick="openAuth('register')">Join Free</button>
+    </div>
+    <div id="navUser" style="display:none;align-items:center;gap:0.8rem">
+      <button class="nav-btn ghost" onclick="showPage('favorites')">❤️ Saved</button>
+      <button class="nav-btn ghost" onclick="showPage('myApplications')">My Applications</button>
+      <div class="nav-user">
+        <div class="nav-avatar" id="navAvatar">U</div>
+        <span id="navName"></span>
+      </div>
+      <button class="nav-btn ghost" onclick="logout()">Sign Out</button>
+    </div>
+    <div id="navAdmin" style="display:none;align-items:center;gap:0.5rem">
+      <button class="nav-btn teal" onclick="showPage('admin')">⚙ Admin</button>
+      <button class="nav-btn ghost" onclick="logout()">Sign Out</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ─── HOME PAGE ─── -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-paws">🐾</div>
+    <div class="hero-content">
+      <div class="hero-badge">🏠 Trusted Adoption Platform</div>
+      <h1>Give a Pet a <em>Forever</em><br>Home Today</h1>
+      <p>Thousands of loving animals are waiting for someone like you. Find your perfect companion and change a life forever.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="showPage('browse')">🐾 Browse Pets</button>
+        <button class="btn btn-outline" onclick="openAuth('register')">Join PawsHome Free</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-num" id="statPets">52</div><div class="stat-label">Pets Available</div></div>
+        <div class="stat"><div class="stat-num" id="statAdopted">128</div><div class="stat-label">Adopted</div></div>
+        <div class="stat"><div class="stat-num">4.9★</div><div class="stat-label">Avg Rating</div></div>
+        <div class="stat"><div class="stat-num">24h</div><div class="stat-label">Response Time</div></div>
+      </div>
+    </div>
+  </div>
+  <!-- Featured Section -->
+  <div class="section" style="background:var(--white)">
+    <div class="section-header">
+      <h2>🌟 Featured Pets</h2>
+      <p>Hand-picked companions looking for their forever homes this week</p>
+    </div>
+    <div class="pet-grid" id="featuredGrid"></div>
+    <div class="text-center mt-2" style="margin-top:2rem">
+      <button class="btn btn-primary" onclick="showPage('browse')">See All Pets →</button>
+    </div>
+  </div>
+  <!-- How it works -->
+  <div class="section">
+    <div class="section-header">
+      <h2>How It Works</h2>
+      <p>Simple, transparent, and heart-warming adoption process</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;max-width:900px;margin:0 auto;text-align:center">
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:var(--shadow)"><div style="font-size:2.5rem;margin-bottom:1rem">🔍</div><h3 style="font-family:'Playfair Display',serif;margin-bottom:0.5rem">Browse & Filter</h3><p style="color:var(--gray);font-size:0.88rem">Explore pets by species, age, size, and personality traits</p></div>
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:var(--shadow)"><div style="font-size:2.5rem;margin-bottom:1rem">📝</div><h3 style="font-family:'Playfair Display',serif;margin-bottom:0.5rem">Apply Online</h3><p style="color:var(--gray);font-size:0.88rem">Fill out our simple adoption application form in minutes</p></div>
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:var(--shadow)"><div style="font-size:2.5rem;margin-bottom:1rem">✅</div><h3 style="font-family:'Playfair Display',serif;margin-bottom:0.5rem">Get Approved</h3><p style="color:var(--gray);font-size:0.88rem">Our team reviews and responds within 24 hours</p></div>
+      <div style="background:#fff;border-radius:20px;padding:2rem;box-shadow:var(--shadow)"><div style="font-size:2.5rem;margin-bottom:1rem">🏠</div><h3 style="font-family:'Playfair Display',serif;margin-bottom:0.5rem">Welcome Home</h3><p style="color:var(--gray);font-size:0.88rem">Bring your new best friend home and start a new chapter</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── BROWSE PAGE ─── -->
+<div id="page-browse" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>Find Your Perfect Pet</h2>
+      <p>Browse all available animals looking for loving homes</p>
+    </div>
+    <!-- Species Filter -->
+    <div class="species-bar" id="speciesBar">
+      <button class="sp-pill active" data-sp="all" onclick="filterSpecies('all',this)">All Pets</button>
+      <button class="sp-pill" data-sp="dog" onclick="filterSpecies('dog',this)">🐕 Dogs</button>
+      <button class="sp-pill" data-sp="cat" onclick="filterSpecies('cat',this)">🐈 Cats</button>
+      <button class="sp-pill" data-sp="rabbit" onclick="filterSpecies('rabbit',this)">🐇 Rabbits</button>
+      <button class="sp-pill" data-sp="bird" onclick="filterSpecies('bird',this)">🦜 Birds</button>
+      <button class="sp-pill" data-sp="hamster" onclick="filterSpecies('hamster',this)">🐹 Hamsters</button>
+      <button class="sp-pill" data-sp="guinea pig" onclick="filterSpecies('guinea pig',this)">🐾 Guinea Pigs</button>
+      <button class="sp-pill" data-sp="reptile" onclick="filterSpecies('reptile',this)">🦎 Reptiles</button>
+    </div>
+    <!-- Search / Filter Bar -->
+    <div class="search-wrap">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search by name or breed..." oninput="applyFilters()">
+      <div class="search-divider"></div>
+      <select id="filterGender" onchange="applyFilters()">
+        <option value="">Any Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <div class="search-divider"></div>
+      <select id="filterSize" onchange="applyFilters()">
+        <option value="">Any Size</option>
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+        <option value="extra-large">Extra Large</option>
+      </select>
+      <div class="search-divider"></div>
+      <select id="filterStatus" onchange="applyFilters()">
+        <option value="available">Available</option>
+        <option value="">All Status</option>
+        <option value="pending">Pending</option>
+        <option value="adopted">Adopted</option>
+      </select>
+    </div>
+    <div class="pet-grid" id="browseGrid"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+</div>
+
+<!-- ─── FAVORITES PAGE ─── -->
+<div id="page-favorites" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>❤️ Your Saved Pets</h2>
+      <p>Pets you've bookmarked for later</p>
+    </div>
+    <div class="pet-grid" id="favoritesGrid"></div>
+  </div>
+</div>
+
+<!-- ─── MY APPLICATIONS PAGE ─── -->
+<div id="page-myApplications" class="page">
+  <div class="section">
+    <div class="section-header">
+      <h2>My Applications</h2>
+      <p>Track the status of your adoption applications</p>
+    </div>
+    <div class="table-wrap" style="max-width:900px;margin:0 auto">
+      <table>
+        <thead><tr><th>Pet</th><th>Species</th><th>Submitted</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody id="myAppsTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADMIN PAGE ─── -->
+<div id="page-admin" class="page">
+  <div class="admin-layout">
+    <div class="admin-header">
+      <h1>⚙️ Admin Dashboard</h1>
+      <button class="btn btn-primary btn-sm" onclick="openAddPetModal()">+ Add Pet</button>
+    </div>
+    <div class="stats-row" id="adminStats"></div>
+    <div class="admin-tabs">
+      <button class="admin-tab active" onclick="switchAdminTab('applications',this)">Applications</button>
+      <button class="admin-tab" onclick="switchAdminTab('pets',this)">Manage Pets</button>
+      <button class="admin-tab" onclick="switchAdminTab('users',this)">Users</button>
+    </div>
+    <!-- Applications Tab -->
+    <div id="tab-applications" class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Applicant</th><th>Pet</th><th>Housing</th><th>Submitted</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="adminAppsTable"></tbody>
+      </table>
+    </div>
+    <!-- Pets Tab -->
+    <div id="tab-pets" class="table-wrap" style="display:none">
+      <table>
+        <thead><tr><th>Name</th><th>Species</th><th>Breed</th><th>Age</th><th>Location</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="adminPetsTable"></tbody>
+      </table>
+    </div>
+    <!-- Users Tab -->
+    <div id="tab-users" class="table-wrap" style="display:none">
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody id="adminUsersTable"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ADOPTION FORM PAGE ─── -->
+<div id="page-adoptionForm" class="page">
+  <div class="form-page">
+    <div class="form-card">
+      <div class="form-header">
+        <h2>📝 Adoption Application</h2>
+        <p id="formPetName" style="color:var(--orange);font-weight:600;font-size:1rem"></p>
+        <p style="margin-top:0.3rem">Please fill in all details honestly. We review every application with care.</p>
+      </div>
+      <!-- Personal Info -->
+      <div class="form-section">
+        <div class="form-section-title">Personal Information</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Full Name *</label><input type="text" id="f_fullName" placeholder="Your full name" required></div>
+          <div class="form-group"><label>Email *</label><input type="email" id="f_email" placeholder="your@email.com" required></div>
+          <div class="form-group"><label>Phone *</label><input type="text" id="f_phone" placeholder="+1 234 567 8900" required></div>
+          <div class="form-group"><label>City *</label><input type="text" id="f_city" placeholder="Your city"></div>
+          <div class="form-group"><label>State *</label><input type="text" id="f_state" placeholder="State"></div>
+          <div class="form-group"><label>ZIP Code</label><input type="text" id="f_zip" placeholder="12345"></div>
+        </div>
+      </div>
+      <!-- Home Environment -->
+      <div class="form-section">
+        <div class="form-section-title">Home Environment</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Housing Type *</label>
+            <select id="f_housing"><option value="">Select...</option><option>house</option><option>apartment</option><option>condo</option><option>townhouse</option><option>other</option></select>
+          </div>
+          <div class="form-group"><label>Number of Adults</label><input type="number" id="f_adults" value="1" min="1"></div>
+          <div class="form-group"><label>Number of Children</label><input type="number" id="f_children" value="0" min="0"></div>
+          <div class="form-group"><label>Children's Ages</label><input type="text" id="f_childAges" placeholder="e.g. 5, 10, 14"></div>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap">
+          <label class="form-check" style="flex:1;min-width:180px"><input type="checkbox" id="f_yard"><span>Has a yard/garden</span></label>
+          <label class="form-check" style="flex:1;min-width:180px"><input type="checkbox" id="f_renting"><span>Currently renting</span></label>
+          <label class="form-check" style="flex:1;min-width:180px"><input type="checkbox" id="f_landlordOk" checked><span>Landlord allows pets</span></label>
+        </div>
+      </div>
+      <!-- Pet Experience -->
+      <div class="form-section">
+        <div class="form-section-title">Pet Experience</div>
+        <div class="form-grid">
+          <div class="form-group"><label>Hours pet will be alone/day *</label><input type="number" id="f_hours" value="4" min="0" max="24"></div>
+          <div class="form-group"><label>Veterinarian Name</label><input type="text" id="f_vet" placeholder="Dr. Smith or None"></div>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap">
+          <label class="form-check" style="flex:1;min-width:180px"><input type="checkbox" id="f_hasPets"><span>Currently have other pets</span></label>
+        </div>
+        <div class="form-group mt-1">
+          <label>Describe current pets (if any)</label>
+          <textarea id="f_currentPets" placeholder="e.g. 1 cat, 2 year old golden retriever..."></textarea>
+        </div>
+        <div class="form-group mt-1">
+          <label>Previous pet experience *</label>
+          <textarea id="f_prevExp" placeholder="Tell us about your experience caring for pets..." required></textarea>
+        </div>
+      </div>
+      <!-- Why Adopt -->
+      <div class="form-section">
+        <div class="form-section-title">Adoption Reason</div>
+        <div class="form-group">
+          <label>Why do you want to adopt this pet? *</label>
+          <textarea id="f_whyAdopt" placeholder="Tell us why this pet is right for you and your family..." required style="min-height:110px"></textarea>
+        </div>
+      </div>
+      <!-- Agreements -->
+      <div class="form-section">
+        <div class="form-section-title">Agreements</div>
+        <div style="display:flex;flex-direction:column;gap:0.8rem">
+          <label class="form-check"><input type="checkbox" id="f_agreeVisit"><span>I agree to allow a home visit if requested by the shelter team</span></label>
+          <label class="form-check"><input type="checkbox" id="f_agreeFees"><span>I understand and agree to pay the applicable adoption fee</span></label>
+          <label class="form-check"><input type="checkbox" id="f_agreeResp"><span>I take full responsibility for the pet's health, welfare, and care for its lifetime</span></label>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn" style="background:var(--warm);color:var(--charcoal)" onclick="showPage('browse')">Cancel</button>
+        <button class="btn btn-primary" onclick="submitApplication()">Submit Application 🐾</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── PET DETAIL MODAL ─── -->
+<div class="modal-overlay" id="petModal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closePetModal()">✕</button>
+    <div class="modal-img"><img id="modalImg" src="" alt="Pet"></div>
+    <div class="modal-body">
+      <div class="modal-top">
+        <div>
+          <div class="modal-badges" id="modalBadges"></div>
+          <div class="modal-title" id="modalName"></div>
+          <div id="modalBreed" style="color:var(--gray);font-size:0.9rem;margin-top:0.3rem"></div>
+        </div>
+        <div style="text-align:right">
+          <div id="modalStatus"></div>
+          <div id="modalLocation" style="color:var(--gray-light);font-size:0.8rem;margin-top:0.5rem"></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <h4>About</h4>
+        <p id="modalDesc" style="color:var(--gray);line-height:1.7;font-size:0.9rem"></p>
+      </div>
+      <div class="modal-section">
+        <h4>Personality & Traits</h4>
+        <div class="traits-list" id="modalTraits"></div>
+      </div>
+      <div class="modal-section">
+        <h4>Health & Care</h4>
+        <div class="health-grid" id="modalHealth"></div>
+      </div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap">
+        <button class="btn btn-primary" id="modalAdoptBtn" onclick="applyForModal()">Apply to Adopt 🐾</button>
+        <button class="btn" style="background:var(--warm);color:var(--charcoal)" id="modalFavBtn" onclick="toggleFavFromModal()">❤️ Save Pet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── AUTH MODAL ─── -->
+<div class="modal-overlay" id="authModal">
+  <div class="auth-card">
+    <div id="loginForm">
+      <h2>Welcome Back 🐾</h2>
+      <p>Sign in to your PawsHome account</p>
+      <div class="form-group"><label>Email</label><input type="email" id="loginEmail" placeholder="you@email.com"></div>
+      <div class="form-group mt-1"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••"></div>
+      <div style="margin-top:1.2rem"><button class="btn btn-primary" style="width:100%" onclick="doLogin()">Sign In</button></div>
+      <div class="auth-switch">Don't have an account? <a onclick="toggleAuthForm('register')">Join Free</a></div>
+      <div class="auth-switch" style="margin-top:0.4rem"><a onclick="doAdminLogin()" style="color:var(--teal);font-size:0.78rem">← Admin login (demo)</a></div>
+    </div>
+    <div id="registerForm" style="display:none">
+      <h2>Join PawsHome 🐾</h2>
+      <p>Create your free account to start adopting</p>
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name</label><input type="text" id="regName" placeholder="Jane Smith"></div>
+        <div class="form-group"><label>Email</label><input type="email" id="regEmail" placeholder="jane@email.com"></div>
+      </div>
+      <div class="form-group mt-1"><label>Password</label><input type="password" id="regPass" placeholder="Min 6 characters"></div>
+      <div class="form-group mt-1"><label>Phone</label><input type="text" id="regPhone" placeholder="+1 234 567 8900"></div>
+      <div style="margin-top:1.2rem"><button class="btn btn-primary" style="width:100%" onclick="doRegister()">Create Account</button></div>
+      <div class="auth-switch">Already have an account? <a onclick="toggleAuthForm('login')">Sign In</a></div>
+    </div>
+    <div style="text-align:right;margin-top:1rem"><button onclick="closeAuth()" style="background:none;border:none;color:var(--gray-light);cursor:pointer;font-size:0.82rem">✕ Close</button></div>
+  </div>
+</div>
+
+<!-- ─── ADD PET MODAL (Admin) ─── -->
+<div class="modal-overlay" id="addPetModal">
+  <div class="modal" style="max-width:700px;position:relative">
+    <button class="modal-close" onclick="closeAddPetModal()">✕</button>
+    <div class="modal-body" style="padding:2rem">
+      <h2 style="font-family:'Playfair Display',serif;margin-bottom:1.5rem">Add New Pet</h2>
+      <div class="form-grid">
+        <div class="form-group"><label>Name *</label><input type="text" id="ap_name" placeholder="Pet name"></div>
+        <div class="form-group"><label>Species *</label>
+          <select id="ap_species"><option value="">Select...</option><option>dog</option><option>cat</option><option>rabbit</option><option>bird</option><option>hamster</option><option>guinea pig</option><option>reptile</option><option>other</option></select>
+        </div>
+        <div class="form-group"><label>Breed *</label><input type="text" id="ap_breed" placeholder="Breed"></div>
+        <div class="form-group"><label>Age (years)</label><input type="number" id="ap_age" value="1" min="0" step="0.5"></div>
+        <div class="form-group"><label>Gender *</label><select id="ap_gender"><option value="">Select...</option><option>male</option><option>female</option></select></div>
+        <div class="form-group"><label>Size *</label><select id="ap_size"><option value="">Select...</option><option>small</option><option>medium</option><option>large</option><option>extra-large</option></select></div>
+        <div class="form-group"><label>City *</label><input type="text" id="ap_city" placeholder="City"></div>
+        <div class="form-group"><label>State *</label><input type="text" id="ap_state" placeholder="State"></div>
+        <div class="form-group"><label>Photo URL</label><input type="text" id="ap_img" placeholder="https://..."></div>
+        <div class="form-group"><label>Status</label><select id="ap_status"><option>available</option><option>pending</option><option>adopted</option></select></div>
+      </div>
+      <div class="form-group mt-1"><label>Description *</label><textarea id="ap_desc" placeholder="Describe the pet..." style="min-height:80px"></textarea></div>
+      <div class="form-group mt-1"><label>Traits (comma separated)</label><input type="text" id="ap_traits" placeholder="playful, gentle, house-trained"></div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1rem">
+        <label class="form-check" style="flex:1;min-width:140px"><input type="checkbox" id="ap_vacc"> Vaccinated</label>
+        <label class="form-check" style="flex:1;min-width:140px"><input type="checkbox" id="ap_sn"> Spayed/Neutered</label>
+        <label class="form-check" style="flex:1;min-width:140px"><input type="checkbox" id="ap_micro"> Microchipped</label>
+      </div>
+      <div class="form-actions">
+        <button class="btn" style="background:var(--warm);color:var(--charcoal)" onclick="closeAddPetModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="adminAddPet()">Add Pet 🐾</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST CONTAINER ─── -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  DATA — 52 Unique Pets
+// ═══════════════════════════════════════════════════════
+const DEFAULT_PETS = [
+  // DOGS (14)
+  {id:'p001',name:'Biscuit',species:'dog',breed:'Golden Retriever',age:{value:3,unit:'years'},gender:'male',size:'large',location:{city:'Austin',state:'TX'},description:'Biscuit is a sunshine-colored Golden who greets every stranger with a wagging tail and soulful eyes. He loves fetch, belly rubs, and snuggling on rainy days.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Friendly','Playful','Loyal','Good with kids'],primaryImage:'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=600&q=80',status:'available'},
+  {id:'p002',name:'Luna',species:'dog',breed:'Siberian Husky',age:{value:2,unit:'years'},gender:'female',size:'medium',location:{city:'Denver',state:'CO'},description:'Luna is a breathtaking Husky with piercing blue eyes and a mischievous personality. She thrives on adventure, long hikes, and howling at the moon.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Energetic','Independent','Vocal','Athletic'],primaryImage:'https://images.unsplash.com/photo-1617895153857-82fe0c8e4974?w=600&q=80',status:'available'},
+  {id:'p003',name:'Rex',species:'dog',breed:'German Shepherd',age:{value:4,unit:'years'},gender:'male',size:'large',location:{city:'Chicago',state:'IL'},description:'Rex is a noble, intelligent Shepherd who was a service dog in training. He responds to commands in two languages and forms deep bonds.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Intelligent','Protective','Trainable','Loyal'],primaryImage:'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?w=600&q=80',status:'available'},
+  {id:'p004',name:'Peanut',species:'dog',breed:'Beagle',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Nashville',state:'TN'},description:'Peanut is a tiny tornado of energy and love. Her nose works overtime sniffing every flower and her long ears flap when she runs.',health:{vaccinated:true,spayedNeutered:false,microchipped:true,specialNeeds:false},traits:['Curious','Playful','Energetic','Snuggly'],primaryImage:'https://images.unsplash.com/photo-1505628346881-b72b27e84530?w=600&q=80',status:'available'},
+  {id:'p005',name:'Duke',species:'dog',breed:'Labrador Retriever',age:{value:5,unit:'years'},gender:'male',size:'large',location:{city:'Seattle',state:'WA'},description:'Duke is a gentle giant who has already raised a litter of puppies. He is calm, patient and would thrive as a therapy dog.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Calm','Gentle','Experienced','Loving'],primaryImage:'https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?w=600&q=80',status:'available'},
+  {id:'p006',name:'Coco',species:'dog',breed:'Miniature Poodle',age:{value:2,unit:'years'},gender:'female',size:'small',location:{city:'Miami',state:'FL'},description:'Coco is a curly-haired diva who loves to show off her tricks. She is hypoallergenic, great in apartments and wildly entertaining.',health:{vaccinated:true,spayedNeutered:true,microchipped:false,specialNeeds:false},traits:['Smart','Hypoallergenic','Entertaining','Cuddly'],primaryImage:'https://images.unsplash.com/photo-1616660098746-1db5a37d6c7d?w=600&q=80',status:'available'},
+  {id:'p007',name:'Bruno',species:'dog',breed:'Boxer',age:{value:3,unit:'years'},gender:'male',size:'large',location:{city:'Phoenix',state:'AZ'},description:'Bruno may look tough but inside he is a total clown. He does zoomies every morning and will guard your heart fiercely.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Funny','Energetic','Protective','Playful'],primaryImage:'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&q=80',status:'available'},
+  {id:'p008',name:'Daisy',species:'dog',breed:'Shih Tzu',age:{value:6,unit:'years'},gender:'female',size:'small',location:{city:'Portland',state:'OR'},description:'Daisy is a lap dog royalty. She expects daily grooming sessions, loves slow walks and rewards her owner with pure adoration.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Gentle','Affectionate','Quiet','Regal'],primaryImage:'https://images.unsplash.com/photo-1537151625747-768eb6cf92b2?w=600&q=80',status:'available'},
+  {id:'p009',name:'Max',species:'dog',breed:'Border Collie',age:{value:2,unit:'years'},gender:'male',size:'medium',location:{city:'Boulder',state:'CO'},description:'Max is a genius. He learned 30 commands in his first month. He needs a mentally stimulating home and will give back extraordinary loyalty.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Genius','Athletic','Eager-to-please','High energy'],primaryImage:'https://images.unsplash.com/photo-1582456891925-a53ef04a5f58?w=600&q=80',status:'available'},
+  {id:'p010',name:'Rosie',species:'dog',breed:'Dachshund',age:{value:4,unit:'years'},gender:'female',size:'small',location:{city:'Atlanta',state:'GA'},description:'Rosie has stubby legs and enormous spirit. She drags her bed to wherever you are and refuses to be left out of any activity.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Stubborn','Loyal','Brave','Hilarious'],primaryImage:'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=600&q=80',status:'available'},
+  {id:'p011',name:'Apollo',species:'dog',breed:'Great Dane',age:{value:1,unit:'years'},gender:'male',size:'extra-large',location:{city:'Dallas',state:'TX'},description:'Apollo is blissfully unaware of his size. He thinks he is a lap dog. Gentle as a summer breeze and big enough to lean on.',health:{vaccinated:true,spayedNeutered:false,microchipped:true,specialNeeds:false},traits:['Gentle giant','Laid-back','Loving','Couch potato'],primaryImage:'https://images.unsplash.com/photo-1548546738-8509cb246ed3?w=600&q=80',status:'available'},
+  {id:'p012',name:'Maple',species:'dog',breed:'Australian Shepherd',age:{value:3,unit:'years'},gender:'female',size:'medium',location:{city:'Salt Lake City',state:'UT'},description:'Maple has multicolored eyes that seem to look into your soul. She is a herding dog who will organize your shoes alphabetically.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Smart','Agile','Beautiful','Hardworking'],primaryImage:'https://images.unsplash.com/photo-1568393691622-c7ba131d63b4?w=600&q=80',status:'pending'},
+  {id:'p013',name:'Theo',species:'dog',breed:'Pembroke Welsh Corgi',age:{value:2,unit:'years'},gender:'male',size:'small',location:{city:'San Francisco',state:'CA'},description:'Theo has legs that are way too short for his ambition. He sprints at full speed, rules with tiny authority and steals socks.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Royal','Spunky','Funny','Stubborn'],primaryImage:'https://images.unsplash.com/photo-1534361960057-19f4434a4f9c?w=600&q=80',status:'available'},
+  {id:'p014',name:'Bella',species:'dog',breed:'Dalmatian',age:{value:3,unit:'years'},gender:'female',size:'large',location:{city:'San Diego',state:'CA'},description:'Bella is a spotted beauty with the grace of a ballet dancer. She was raised with cats and is one of the most social dogs in the shelter.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Social','Active','Elegant','Good with cats'],primaryImage:'https://images.unsplash.com/photo-1588943211346-0908a1fb0b01?w=600&q=80',status:'available'},
+
+  // CATS (12)
+  {id:'p015',name:'Whiskers',species:'cat',breed:'Maine Coon',age:{value:4,unit:'years'},gender:'male',size:'large',location:{city:'Boston',state:'MA'},description:'Whiskers is the lion of the cat world. His enormous fluffy mane and dog-like personality make him the most talked-about resident at our shelter.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Dog-like','Fluffy','Talkative','Affectionate'],primaryImage:'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?w=600&q=80',status:'available'},
+  {id:'p016',name:'Nala',species:'cat',breed:'Siamese',age:{value:2,unit:'years'},gender:'female',size:'small',location:{city:'Los Angeles',state:'CA'},description:'Nala has the voice of an opera singer and uses it freely. She is intensely loyal to her person and follows them room to room like a shadow.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Vocal','Loyal','Clingy','Elegant'],primaryImage:'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?w=600&q=80',status:'available'},
+  {id:'p017',name:'Oliver',species:'cat',breed:'British Shorthair',age:{value:5,unit:'years'},gender:'male',size:'medium',location:{city:'New York',state:'NY'},description:'Oliver is the definition of dignified. He will sit beside you, not on you. He approves of quiet evenings, quality tuna and classical music.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Independent','Dignified','Quiet','Reserved'],primaryImage:'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=600&q=80',status:'available'},
+  {id:'p018',name:'Mochi',species:'cat',breed:'Scottish Fold',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Seattle',state:'WA'},description:'Mochi looks permanently surprised thanks to her folded ears and enormous round eyes. She loves crinkle toys and hiding in grocery bags.',health:{vaccinated:true,spayedNeutered:false,microchipped:true,specialNeeds:false},traits:['Curious','Playful','Adorable','Quirky'],primaryImage:'https://images.unsplash.com/photo-1596854407944-bf87f6fdd49e?w=600&q=80',status:'available'},
+  {id:'p019',name:'Shadow',species:'cat',breed:'Bombay',age:{value:3,unit:'years'},gender:'male',size:'medium',location:{city:'Houston',state:'TX'},description:'Shadow is a sleek panther in miniature. His copper eyes glow in dim light and he moves with absolute silence through any room.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Mysterious','Stealthy','Elegant','Independent'],primaryImage:'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&q=80',status:'available'},
+  {id:'p020',name:'Cleo',species:'cat',breed:'Egyptian Mau',age:{value:2,unit:'years'},gender:'female',size:'small',location:{city:'Las Vegas',state:'NV'},description:'Cleo is spotted like a wild cat and fast as lightning. She was named after Cleopatra because she clearly believes she deserves worship.',health:{vaccinated:true,spayedNeutered:true,microchipped:false,specialNeeds:false},traits:['Fast','Spotted','Wild','Demanding'],primaryImage:'https://images.unsplash.com/photo-1529778873920-4da4926a72c2?w=600&q=80',status:'available'},
+  {id:'p021',name:'Tigger',species:'cat',breed:'Bengal',age:{value:3,unit:'years'},gender:'male',size:'medium',location:{city:'Minneapolis',state:'MN'},description:'Tigger has the gorgeous rosette markings of a wild leopard and the bold personality to match. He loves water, climbing and interactive toys.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Athletic','Bold','Loves water','Interactive'],primaryImage:'https://images.unsplash.com/photo-1591154669695-5f2a8d20c089?w=600&q=80',status:'available'},
+  {id:'p022',name:'Pearl',species:'cat',breed:'Ragdoll',age:{value:4,unit:'years'},gender:'female',size:'large',location:{city:'Charlotte',state:'NC'},description:'Pearl earns her name by going completely limp when you hold her. She is a blue-eyed beauty who melts into your arms.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Docile','Affectionate','Blue-eyed','Floor melter'],primaryImage:'https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=600&q=80',status:'available'},
+  {id:'p023',name:'Ginger',species:'cat',breed:'Turkish Van',age:{value:2,unit:'years'},gender:'female',size:'medium',location:{city:'Memphis',state:'TN'},description:'Ginger is a rare flame-point with a love of swimming that surprises everyone. She sits at the edge of the bathtub and splashes water.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Loves water','Rare','Playful','Unique'],primaryImage:'https://images.unsplash.com/photo-1478098711619-5ab0b478d6e6?w=600&q=80',status:'pending'},
+  {id:'p024',name:'Mittens',species:'cat',breed:'American Polydactyl',age:{value:7,unit:'years'},gender:'male',size:'medium',location:{city:'Baltimore',state:'MD'},description:'Mittens has extra toes that look like little thumbs. He uses them to open cabinet doors and occasionally turns off the lights at night.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Extra toes','Clever','Gentle senior','Amusing'],primaryImage:'https://images.unsplash.com/photo-1560114928-40f1f1eb26a0?w=600&q=80',status:'available'},
+  {id:'p025',name:'Bluebell',species:'cat',breed:'Russian Blue',age:{value:3,unit:'years'},gender:'female',size:'small',location:{city:'Indianapolis',state:'IN'},description:'Bluebell has the most gorgeous silver-blue coat that shimmers in sunlight. She is shy at first but becomes fiercely devoted once she trusts you.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Shy','Devoted','Low-allergen','Beautiful'],primaryImage:'https://images.unsplash.com/photo-1543852786-1cf6624b9987?w=600&q=80',status:'available'},
+  {id:'p026',name:'Simba',species:'cat',breed:'Abyssinian',age:{value:2,unit:'years'},gender:'male',size:'small',location:{city:'Columbus',state:'OH'},description:'Simba is the most active cat in the shelter. He leaps to the top shelves in seconds and insists on being involved in everything you do.',health:{vaccinated:true,spayedNeutered:true,microchipped:true,specialNeeds:false},traits:['Agile','Curious','Energetic','Nosy'],primaryImage:'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600&q=80',status:'available'},
+
+  // RABBITS (6)
+  {id:'p027',name:'Thumper',species:'rabbit',breed:'Holland Lop',age:{value:1,unit:'years'},gender:'male',size:'small',location:{city:'Providence',state:'RI'},description:'Thumper has floppy ears that nearly drag on the floor and a personality twice his size. He binkies with joy every morning and loves leafy greens.',health:{vaccinated:false,spayedNeutered:true,microchipped:false,specialNeeds:false},traits:['Floppy ears','Binky-happy','Gentle','Greens lover'],primaryImage:'https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=600&q=80',status:'available'},
+  {id:'p028',name:'Clover',species:'rabbit',breed:'Flemish Giant',age:{value:2,unit:'years'},gender:'female',size:'large',location:{city:'Madison',state:'WI'},description:'Clover is the size of a small cat and just as lazy. She stretches out in her pen and judges passersby with slow, regal blinks.',health:{vaccinated:false,spayedNeutered:true,microchipped:false,specialNeeds:false},traits:['Giant','Laid-back','Regal','Gentle'],primaryImage:'https://images.unsplash.com/photo-1535241749838-299277b6305f?w=600&q=80',status:'available'},
+  {id:'p029',name:'Hazel',species:'rabbit',breed:'Lionhead',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Richmond',state:'VA'},description:'Hazel sports a magnificent lion mane of fur around her tiny head. She is the most photogenic rabbit in existence and she knows it.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Fluffy mane','Photogenic','Gentle','Curious'],primaryImage:'https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=600&q=80',status:'available'},
+  {id:'p030',name:'Pepper',species:'rabbit',breed:'Rex',age:{value:3,unit:'years'},gender:'male',size:'medium',location:{city:'Louisville',state:'KY'},description:'Pepper has the most velvety fur you will ever touch. His mottled black-and-white coat makes him look like a living abstract painting.',health:{vaccinated:false,spayedNeutered:true,microchipped:false,specialNeeds:false},traits:['Velvety fur','Calm','Mottled','Relaxed'],primaryImage:'https://images.unsplash.com/photo-1591382386627-349b692688ff?w=600&q=80',status:'available'},
+  {id:'p031',name:'Nibbles',species:'rabbit',breed:'Mini Rex',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Raleigh',state:'NC'},description:'Nibbles lives up to her name. She approaches everything with curiosity and a nibble. She is perfectly trained and uses her litter box religiously.',health:{vaccinated:false,spayedNeutered:true,microchipped:false,specialNeeds:false},traits:['Litter trained','Curious','Nibbles everything','House-friendly'],primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80',status:'available'},
+  {id:'p032',name:'Cotton',species:'rabbit',breed:'Angora',age:{value:2,unit:'years'},gender:'male',size:'small',location:{city:'Pittsburgh',state:'PA'},description:'Cotton is a walking cloud of white fluff. He requires regular grooming but rewards his owner with legendary softness and calm company.',health:{vaccinated:false,spayedNeutered:true,microchipped:false,specialNeeds:true,specialNeedsDescription:'Regular grooming required'},traits:['Fluffy','Calm','Grooming needed','Soft'],primaryImage:'https://images.unsplash.com/photo-1507666405895-422eee7d517f?w=600&q=80',status:'available'},
+
+  // BIRDS (6)
+  {id:'p033',name:'Kiwi',species:'bird',breed:'Sun Conure',age:{value:2,unit:'years'},gender:'male',size:'small',location:{city:'Orlando',state:'FL'},description:'Kiwi is a tiny explosion of tropical color. His sunset feathers glow orange to yellow and he screams with joy whenever his favorite person enters the room.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Loud','Colorful','Affectionate','Dramatic'],primaryImage:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600&q=80',status:'available'},
+  {id:'p034',name:'Einstein',species:'bird',breed:'African Grey Parrot',age:{value:5,unit:'years'},gender:'male',size:'medium',location:{city:'Tampa',state:'FL'},description:'Einstein has a vocabulary of 200 words and uses them in sentences. He will ask for crackers, comment on your outfit and solve simple puzzles.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['200+ words','Problem solver','Witty','Demanding'],primaryImage:'https://images.unsplash.com/photo-1548247416-ec66f4900b2e?w=600&q=80',status:'available'},
+  {id:'p035',name:'Mango',species:'bird',breed:'Budgerigar',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Tucson',state:'AZ'},description:'Mango is a tiny yellow budgie who loves mirrors and sings to her own reflection for hours. She is beginner-friendly and endlessly entertaining.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Beginner-friendly','Sings','Tiny','Mirror lover'],primaryImage:'https://images.unsplash.com/photo-1560743641-3914f2c45636?w=600&q=80',status:'available'},
+  {id:'p036',name:'Rio',species:'bird',breed:'Blue-throated Macaw',age:{value:4,unit:'years'},gender:'male',size:'large',location:{city:'Jacksonville',state:'FL'},description:'Rio is a vibrant blue-and-gold macaw who was raised by a professional trainer. He can do 15 tricks and loves dancing to pop music.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['15 tricks','Dancer','Stunning','Trained'],primaryImage:'https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=600&q=80',status:'available'},
+  {id:'p037',name:'Peaches',species:'bird',breed:'Cockatiel',age:{value:3,unit:'years'},gender:'female',size:'small',location:{city:'Albuquerque',state:'NM'},description:'Peaches whistles the theme from Star Wars and will perch on your shoulder for hours. She is gentle enough for children and affectionate enough for seniors.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Whistles tunes','Shoulder bird','Gentle','Family-safe'],primaryImage:'https://images.unsplash.com/photo-1591198936750-16d8e15edb9c?w=600&q=80',status:'available'},
+  {id:'p038',name:'Indigo',species:'bird',breed:'Indian Ringneck Parakeet',age:{value:2,unit:'years'},gender:'male',size:'small',location:{city:'El Paso',state:'TX'},description:'Indigo is a violet-blue beauty who has been hand-tamed from birth. He steps up on command and already says hello in three languages.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Hand-tamed','Multilingual','Beautiful','Obedient'],primaryImage:'https://images.unsplash.com/photo-1581922819941-6ab31ab79afc?w=600&q=80',status:'available'},
+
+  // HAMSTERS (5)
+  {id:'p039',name:'Nugget',species:'hamster',breed:'Syrian Hamster',age:{value:0.5,unit:'years'},gender:'male',size:'small',location:{city:'Cincinnati',state:'OH'},description:'Nugget stuffs his cheeks to maximum capacity every mealtime. He runs 5 miles every night on his wheel and greets you at 8pm on the dot.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Chubby cheeks','Nocturnal','Routine-oriented','Active'],primaryImage:'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=600&q=80',status:'available'},
+  {id:'p040',name:'Pumpkin',species:'hamster',breed:'Roborovski Dwarf',age:{value:0.5,unit:'years'},gender:'female',size:'small',location:{city:'Cleveland',state:'OH'},description:'Pumpkin is the smallest hamster we have ever seen but has enough energy to power a small city. She is lightning fast and absurdly cute.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Tiny','Super fast','Energetic','Adorable'],primaryImage:'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=600&q=80',status:'available'},
+  {id:'p041',name:'Caramel',species:'hamster',breed:'Chinese Hamster',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Oklahoma City',state:'OK'},description:'Caramel is unusually tame for a Chinese hamster and will sit on your hand watching TV. Her caramel-colored coat is silky and her eyes are like black pearls.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Hand-tame','Calm','Silky','Beautiful'],primaryImage:'https://images.unsplash.com/photo-1580730093622-5ec47d3b19ca?w=600&q=80',status:'available'},
+  {id:'p042',name:'Oreo',species:'hamster',breed:'Panda Bear Hamster',age:{value:0.5,unit:'years'},gender:'male',size:'small',location:{city:'Tulsa',state:'OK'},description:'Oreo is black and white like a cookie and just as sweet. He was the most socialized pup in his litter and loves being held.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Panda markings','Social','Sweet','Gentle'],primaryImage:'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=600&q=80',status:'available'},
+  {id:'p043',name:'Hazel',species:'hamster',breed:'Winter White Dwarf',age:{value:0.5,unit:'years'},gender:'female',size:'small',location:{city:'Wichita',state:'KS'},description:'Hazel turns pure white in winter — a stunning seasonal transformation. She is social with her cage-mate and together they burrow elaborate tunnels.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Color-changing','Social','Burrower','Cute'],primaryImage:'https://images.unsplash.com/photo-1580730093622-5ec47d3b19ca?w=600&q=80',status:'available'},
+
+  // GUINEA PIGS (5)
+  {id:'p044',name:'Butterscotch',species:'guinea pig',breed:'American Guinea Pig',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Baton Rouge',state:'LA'},description:'Butterscotch popcorns with joy whenever she hears the fridge open. Her golden fur is impossibly soft and she wheeks with enthusiasm for every meal.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Popcorns','Wheeky','Foodie','Golden fur'],primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80',status:'available'},
+  {id:'p045',name:'Pebbles',species:'guinea pig',breed:'Abyssinian Guinea Pig',age:{value:2,unit:'years'},gender:'male',size:'small',location:{city:'New Orleans',state:'LA'},description:'Pebbles has a wild rosette coat that spins in eight directions at once. He is the pig equivalent of a professor — curious about everything, chews everything.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Rosette coat','Curious','Chewer','Vocal'],primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80',status:'available'},
+  {id:'p046',name:'Sundae',species:'guinea pig',breed:'Peruvian Guinea Pig',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Jackson',state:'MS'},description:'Sundae has floor-length silky hair that fans out around her like a living sundress. She is the most glamorous guinea pig in the shelter by far.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:true,specialNeedsDescription:'Daily hair brushing required'},traits:['Long hair','Glamorous','Gentle','Grooming needed'],primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80',status:'available'},
+  {id:'p047',name:'Pickle',species:'guinea pig',breed:'Teddy Guinea Pig',age:{value:1,unit:'years'},gender:'male',size:'small',location:{city:'Montgomery',state:'AL'},description:'Pickle has a dense, rough coat that stands up like a tiny teddy bear. He loves being petted and makes the most satisfying rumbling purr when content.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Teddy coat','Purrs','Loves pets','Laid-back'],primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80',status:'available'},
+  {id:'p048',name:'Biscotti',species:'guinea pig',breed:'Skinny Pig',age:{value:0.5,unit:'years'},gender:'female',size:'small',location:{city:'Savannah',state:'GA'},description:'Biscotti is a hairless guinea pig — wrinkly, warm and wonderfully weird. She loves being covered in soft blankets and giving warm little kisses.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:true,specialNeedsDescription:'Needs warm environment, moisturizing skin care'},traits:['Hairless','Warm','Unique','Blanket lover'],primaryImage:'https://images.unsplash.com/photo-1548767797-d8c844163c4c?w=600&q=80',status:'available'},
+
+  // REPTILES (4)
+  {id:'p049',name:'Gizmo',species:'reptile',breed:'Bearded Dragon',age:{value:2,unit:'years'},gender:'male',size:'medium',location:{city:'Phoenix',state:'AZ'},description:'Gizmo basks under his heat lamp like a tiny king. He is completely hand-tame and will perch on your arm watching nature documentaries with great seriousness.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:true,specialNeedsDescription:'Requires UVB lighting and specific diet'},traits:['Hand-tame','Regal','Heat-lover','Docile'],primaryImage:'https://images.unsplash.com/photo-1610611429978-6e914a2afa9e?w=600&q=80',status:'available'},
+  {id:'p050',name:'Jade',species:'reptile',breed:'Veiled Chameleon',age:{value:1,unit:'years'},gender:'female',size:'small',location:{city:'Scottsdale',state:'AZ'},description:'Jade shifts between emerald, teal, and gold throughout the day depending on her mood. She is the living mood ring of the reptile world.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:true,specialNeedsDescription:'Requires humidity control and specialized diet'},traits:['Color-changing','Exotic','Shy','Beautiful'],primaryImage:'https://images.unsplash.com/photo-1504450874802-0ba2bcd9b5ae?w=600&q=80',status:'available'},
+  {id:'p051',name:'Draco',species:'reptile',breed:'Blue-Tongued Skink',age:{value:3,unit:'years'},gender:'male',size:'medium',location:{city:'Tempe',state:'AZ'},description:'Draco flashes his shocking blue tongue as a defense display but is actually a total sweetheart. He is one of the most handleable reptiles in existence.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Blue tongue','Handleable','Calm','Docile'],primaryImage:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&q=80',status:'available'},
+  {id:'p052',name:'Zen',species:'reptile',breed:'Leopard Gecko',age:{value:2,unit:'years'},gender:'female',size:'small',location:{city:'Mesa',state:'AZ'},description:'Zen is the perfect starter reptile. Her spotted yellow skin is stunning, she does not require UV lighting and she is perfectly comfortable being handled daily.',health:{vaccinated:false,spayedNeutered:false,microchipped:false,specialNeeds:false},traits:['Beginner-friendly','No UV needed','Spotted','Calm'],primaryImage:'https://images.unsplash.com/photo-1610611429978-6e914a2efa9e?w=600&q=80',status:'available'},
+];
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let currentUser = null;
+let currentPetId = null;
+let activePetFilter = 'all';
+let currentPage = 1;
+const PETS_PER_PAGE = 12;
+
+// ─── LocalStorage helpers ───
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k))}catch{return null}}
+function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+function getPets(){return lsGet('paws_pets')||DEFAULT_PETS}
+function savePets(p){lsSet('paws_pets',p)}
+function getUsers(){return lsGet('paws_users')||[{id:'admin001',name:'Admin',email:'admin@pawshome.com',password:'admin123',role:'admin',favorites:[]}]}
+function saveUsers(u){lsSet('paws_users',u)}
+function getApplications(){return lsGet('paws_apps')||[]}
+function saveApplications(a){lsSet('paws_apps',a)}
+
+// ─── Init ───
+function init(){
+  if(!lsGet('paws_pets'))savePets(DEFAULT_PETS);
+  if(!lsGet('paws_users'))saveUsers(getUsers());
+  const saved=lsGet('paws_session');
+  if(saved){currentUser=saved;updateNav();}
+  renderFeatured();
+  renderBrowse();
+  updateHomeStats();
+}
+
+// ═══════════════════════════════════════════════════════
+//  NAV & PAGES
+// ═══════════════════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const el=document.getElementById('page-'+id);
+  if(el){el.classList.add('active');window.scrollTo(0,0);}
+  if(id==='browse')renderBrowse();
+  if(id==='favorites')renderFavorites();
+  if(id==='myApplications')renderMyApps();
+  if(id==='admin'&&currentUser?.role==='admin')renderAdmin();
+}
+
+function updateNav(){
+  const g=document.getElementById('navGuest');
+  const u=document.getElementById('navUser');
+  const a=document.getElementById('navAdmin');
+  if(!currentUser){g.style.display='flex';u.style.display='none';a.style.display='none';return;}
+  g.style.display='none';
+  if(currentUser.role==='admin'){a.style.display='flex';u.style.display='none';}
+  else{u.style.display='flex';a.style.display='none';document.getElementById('navAvatar').textContent=currentUser.name[0].toUpperCase();document.getElementById('navName').textContent=currentUser.name.split(' ')[0];}
+}
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+function openAuth(mode){
+  document.getElementById('authModal').classList.add('open');
+  toggleAuthForm(mode);
+}
+function closeAuth(){document.getElementById('authModal').classList.remove('open');}
+function toggleAuthForm(m){
+  document.getElementById('loginForm').style.display=m==='login'?'block':'none';
+  document.getElementById('registerForm').style.display=m==='register'?'block':'none';
+}
+function doLogin(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const users=getUsers();
+  const user=users.find(u=>u.email===email&&u.password===pass);
+  if(!user)return toast('Invalid email or password','error');
+  currentUser=user;lsSet('paws_session',user);
+  updateNav();closeAuth();toast('Welcome back, '+user.name.split(' ')[0]+'! 🐾','success');
+  if(user.role==='admin'){showPage('admin');}
+}
+function doAdminLogin(){
+  document.getElementById('loginEmail').value='admin@pawshome.com';
+  document.getElementById('loginPass').value='admin123';
+  doLogin();
+}
+function doRegister(){
+  const name=document.getElementById('regName').value.trim();
+  const email=document.getElementById('regEmail').value.trim();
+  const pass=document.getElementById('regPass').value;
+  const phone=document.getElementById('regPhone').value.trim();
+  if(!name||!email||!pass)return toast('Please fill all required fields','error');
+  if(pass.length<6)return toast('Password must be at least 6 characters','error');
+  const users=getUsers();
+  if(users.find(u=>u.email===email))return toast('Email already registered','error');
+  const user={id:'u'+Date.now(),name,email,password:pass,phone,role:'user',favorites:[],createdAt:new Date().toISOString()};
+  users.push(user);saveUsers(users);
+  currentUser=user;lsSet('paws_session',user);
+  updateNav();closeAuth();toast('Welcome to PawsHome, '+name.split(' ')[0]+'! 🐾','success');
+}
+function logout(){currentUser=null;lsSet('paws_session',null);updateNav();showPage('home');toast('Signed out. See you soon!','info');}
+
+// ═══════════════════════════════════════════════════════
+//  PET CARDS
+// ═══════════════════════════════════════════════════════
+function speciesEmoji(s){const m={dog:'🐕',cat:'🐈',rabbit:'🐇',bird:'🦜',hamster:'🐹','guinea pig':'🐾',reptile:'🦎',other:'🐾'};return m[s]||'🐾';}
+function petCardHTML(pet){
+  const favs=currentUser?.favorites||[];
+  const isFav=favs.includes(pet.id);
+  const statusClass='status-'+pet.status;
+  return`<div class="pet-card" onclick="openPetModal('${pet.id}')">
+    <div class="pet-card-img">
+      <img src="${pet.primaryImage}" alt="${pet.name}" onerror="this.src='https://images.unsplash.com/photo-1444212477490-ca407925329e?w=600&q=80'">
+      <div class="pet-status-badge ${statusClass}">${pet.status}</div>
+      <button class="fav-btn ${isFav?'active':''}" onclick="event.stopPropagation();toggleFav('${pet.id}',this)" title="Save">${isFav?'❤️':'🤍'}</button>
+    </div>
+    <div class="pet-card-body">
+      <div class="pet-name">${pet.name}</div>
+      <div class="pet-meta">
+        <span class="pet-tag species">${speciesEmoji(pet.species)} ${pet.species}</span>
+        <span class="pet-tag age">${pet.age.value} ${pet.age.unit}</span>
+        <span class="pet-tag">${pet.gender}</span>
+        <span class="pet-tag">${pet.size}</span>
+      </div>
+      <div class="pet-desc-preview">${pet.description}</div>
+    </div>
+    <div class="pet-card-footer">
+      <span class="pet-location">📍 ${pet.location.city}, ${pet.location.state}</span>
+      ${pet.status==='available'?`<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();startAdopt('${pet.id}')">Adopt</button>`:'<span style="color:var(--gray-light);font-size:0.78rem">'+(pet.status==='pending'?'Under Review':'Adopted')+'</span>'}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  HOME FEATURED
+// ═══════════════════════════════════════════════════════
+function renderFeatured(){
+  const pets=getPets().filter(p=>p.status==='available').slice(0,4);
+  document.getElementById('featuredGrid').innerHTML=pets.map(petCardHTML).join('');
+}
+function updateHomeStats(){
+  const pets=getPets();
+  document.getElementById('statPets').textContent=pets.filter(p=>p.status==='available').length;
+}
+
+// ═══════════════════════════════════════════════════════
+//  BROWSE
+// ═══════════════════════════════════════════════════════
+function filterSpecies(sp,btn){
+  activePetFilter=sp;currentPage=1;
+  document.querySelectorAll('.sp-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderBrowse();
+}
+function applyFilters(){currentPage=1;renderBrowse();}
+function getFilteredPets(){
+  let pets=getPets();
+  const q=document.getElementById('searchInput')?.value.toLowerCase()||'';
+  const gender=document.getElementById('filterGender')?.value||'';
+  const size=document.getElementById('filterSize')?.value||'';
+  const status=document.getElementById('filterStatus')?.value||'';
+  if(activePetFilter!=='all')pets=pets.filter(p=>p.species===activePetFilter);
+  if(q)pets=pets.filter(p=>p.name.toLowerCase().includes(q)||p.breed.toLowerCase().includes(q));
+  if(gender)pets=pets.filter(p=>p.gender===gender);
+  if(size)pets=pets.filter(p=>p.size===size);
+  if(status)pets=pets.filter(p=>p.status===status);
+  return pets;
+}
+function renderBrowse(){
+  const all=getFilteredPets();
+  const total=all.length;
+  const totalPages=Math.ceil(total/PETS_PER_PAGE);
+  const start=(currentPage-1)*PETS_PER_PAGE;
+  const pagePets=all.slice(start,start+PETS_PER_PAGE);
+  const grid=document.getElementById('browseGrid');
+  if(!grid)return;
+  if(pagePets.length===0){grid.innerHTML='<div class="no-pets-msg"><div style="font-size:3rem">🔍</div><p>No pets found. Try different filters.</p></div>';document.getElementById('pagination').innerHTML='';return;}
+  grid.innerHTML=pagePets.map(petCardHTML).join('');
+  // Pagination
+  const pg=document.getElementById('pagination');
+  if(totalPages<=1){pg.innerHTML='';return;}
+  let html='';
+  for(let i=1;i<=totalPages;i++)html+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="gotoPage(${i})">${i}</button>`;
+  pg.innerHTML=html;
+}
+function gotoPage(n){currentPage=n;renderBrowse();document.getElementById('page-browse').scrollTo(0,0);window.scrollTo(0,200);}
+
+// ═══════════════════════════════════════════════════════
+//  FAVORITES
+// ═══════════════════════════════════════════════════════
+function toggleFav(id,btn){
+  if(!currentUser)return openAuth('login');
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.id===currentUser.id);
+  if(!users[idx].favorites)users[idx].favorites=[];
+  const fi=users[idx].favorites.indexOf(id);
+  if(fi>-1){users[idx].favorites.splice(fi,1);btn.textContent='🤍';btn.classList.remove('active');toast('Removed from saved','info');}
+  else{users[idx].favorites.push(id);btn.textContent='❤️';btn.classList.add('active');toast('Saved! ❤️','success');}
+  currentUser=users[idx];lsSet('paws_session',currentUser);saveUsers(users);
+}
+function renderFavorites(){
+  if(!currentUser)return;
+  const pets=getPets().filter(p=>currentUser.favorites?.includes(p.id));
+  const g=document.getElementById('favoritesGrid');
+  if(!g)return;
+  if(pets.length===0){g.innerHTML='<div style="text-align:center;grid-column:1/-1;padding:3rem;color:var(--gray-light)"><div style="font-size:3rem">🤍</div><p style="margin-top:0.5rem">No saved pets yet. Browse and click ❤️</p></div>';return;}
+  g.innerHTML=pets.map(petCardHTML).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  PET MODAL
+// ═══════════════════════════════════════════════════════
+function openPetModal(id){
+  const pet=getPets().find(p=>p.id===id);
+  if(!pet)return;
+  currentPetId=id;
+  document.getElementById('petModal').classList.add('open');
+  document.getElementById('modalImg').src=pet.primaryImage;
+  document.getElementById('modalImg').onerror=function(){this.src='https://images.unsplash.com/photo-1444212477490-ca407925329e?w=600&q=80'};
+  document.getElementById('modalName').textContent=pet.name;
+  document.getElementById('modalBreed').textContent=pet.breed+' · '+pet.gender+' · '+pet.size;
+  document.getElementById('modalLocation').textContent='📍 '+pet.location.city+', '+pet.location.state;
+  document.getElementById('modalDesc').textContent=pet.description;
+  const statusCol=pet.status==='available'?'var(--green)':pet.status==='pending'?'var(--yellow)':'var(--gray)';
+  document.getElementById('modalStatus').innerHTML=`<span class="status-pill status-${pet.status}" style="background:${statusCol}11;color:${statusCol};border:1px solid ${statusCol}44">${pet.status.toUpperCase()}</span>`;
+  document.getElementById('modalBadges').innerHTML=`<span class="pet-tag species">${speciesEmoji(pet.species)} ${pet.species}</span><span class="pet-tag age">${pet.age.value} ${pet.age.unit}</span>`;
+  document.getElementById('modalTraits').innerHTML=pet.traits.map(t=>`<span class="trait-chip">${t}</span>`).join('');
+  const h=pet.health;
+  document.getElementById('modalHealth').innerHTML=[
+    ['Vaccinated',h.vaccinated],['Spayed/Neutered',h.spayedNeutered],['Microchipped',h.microchipped],['Special Needs',h.specialNeeds]
+  ].map(([l,v])=>`<div class="health-item"><div class="health-dot ${v?'dot-yes':'dot-no'}"></div><span>${l}: <strong>${v?'Yes':'No'}</strong></span></div>`).join('');
+  const adoptBtn=document.getElementById('modalAdoptBtn');
+  adoptBtn.style.display=pet.status==='available'?'inline-flex':'none';
+  const fav=currentUser?.favorites?.includes(id);
+  document.getElementById('modalFavBtn').textContent=fav?'❤️ Saved':'🤍 Save Pet';
+}
+function closePetModal(){document.getElementById('petModal').classList.remove('open');}
+function applyForModal(){closePetModal();startAdopt(currentPetId);}
+function toggleFavFromModal(){
+  if(!currentUser)return openAuth('login');
+  const users=getUsers();
+  const idx=users.findIndex(u=>u.id===currentUser.id);
+  if(!users[idx].favorites)users[idx].favorites=[];
+  const fi=users[idx].favorites.indexOf(currentPetId);
+  if(fi>-1){users[idx].favorites.splice(fi,1);document.getElementById('modalFavBtn').textContent='🤍 Save Pet';toast('Removed from saved','info');}
+  else{users[idx].favorites.push(currentPetId);document.getElementById('modalFavBtn').textContent='❤️ Saved';toast('Saved! ❤️','success');}
+  currentUser=users[idx];lsSet('paws_session',currentUser);saveUsers(users);
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADOPTION FORM
+// ═══════════════════════════════════════════════════════
+function startAdopt(petId){
+  if(!currentUser)return openAuth('login');
+  const pet=getPets().find(p=>p.id===petId);
+  if(!pet)return;
+  // Check if already applied
+  const apps=getApplications();
+  if(apps.find(a=>a.petId===petId&&a.userId===currentUser.id))return toast('You already applied for '+pet.name+'!','info');
+  currentPetId=petId;
+  document.getElementById('formPetName').textContent='Applying to adopt: '+pet.name+' ('+pet.breed+')';
+  document.getElementById('f_fullName').value=currentUser.name||'';
+  document.getElementById('f_email').value=currentUser.email||'';
+  document.getElementById('f_phone').value=currentUser.phone||'';
+  showPage('adoptionForm');
+}
+function submitApplication(){
+  const req=['f_fullName','f_email','f_phone','f_housing','f_prevExp','f_whyAdopt'];
+  for(const id of req){const el=document.getElementById(id);if(!el.value.trim()){el.focus();return toast('Please fill all required fields','error');}}
+  if(!document.getElementById('f_agreeResp').checked)return toast('Please agree to take responsibility for the pet','error');
+  const app={
+    id:'app'+Date.now(),
+    petId:currentPetId,
+    userId:currentUser.id,
+    personalInfo:{fullName:document.getElementById('f_fullName').value,email:document.getElementById('f_email').value,phone:document.getElementById('f_phone').value,address:{city:document.getElementById('f_city').value,state:document.getElementById('f_state').value,zip:document.getElementById('f_zip').value}},
+    homeEnvironment:{housingType:document.getElementById('f_housing').value,hasYard:document.getElementById('f_yard').checked,isRenting:document.getElementById('f_renting').checked,landlordAllowsPets:document.getElementById('f_landlordOk').checked,numberOfAdults:+document.getElementById('f_adults').value,numberOfChildren:+document.getElementById('f_children').value,childrenAges:document.getElementById('f_childAges').value},
+    petExperience:{hasPetsNow:document.getElementById('f_hasPets').checked,currentPets:document.getElementById('f_currentPets').value,previousExperience:document.getElementById('f_prevExp').value,hoursAlonePerDay:+document.getElementById('f_hours').value,veterinarianName:document.getElementById('f_vet').value},
+    whyAdopt:document.getElementById('f_whyAdopt').value,
+    agreements:{agreeToVisit:document.getElementById('f_agreeVisit').checked,agreeToFees:document.getElementById('f_agreeFees').checked,agreeToResponsibility:document.getElementById('f_agreeResp').checked},
+    status:'pending',adminNotes:'',rejectionReason:'',
+    submittedAt:new Date().toISOString()
+  };
+  const apps=getApplications();apps.push(app);saveApplications(apps);
+  // Mark pet as pending
+  const pets=getPets();const pi=pets.findIndex(p=>p.id===currentPetId);if(pi>-1){pets[pi].status='pending';savePets(pets);}
+  toast('Application submitted! We\'ll be in touch within 24 hours 🐾','success');
+  showPage('myApplications');
+}
+
+// ═══════════════════════════════════════════════════════
+//  MY APPLICATIONS
+// ═══════════════════════════════════════════════════════
+function renderMyApps(){
+  if(!currentUser)return;
+  const apps=getApplications().filter(a=>a.userId===currentUser.id);
+  const pets=getPets();
+  const tb=document.getElementById('myAppsTable');
+  if(apps.length===0){tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-light)">No applications yet. Browse pets and apply!</td></tr>';return;}
+  tb.innerHTML=apps.map(a=>{
+    const pet=pets.find(p=>p.id===a.petId)||{name:'Unknown',species:'-'};
+    const cls={'pending':'pill-pending','reviewing':'pill-reviewing','approved':'pill-approved','rejected':'pill-rejected'}[a.status];
+    return`<tr><td><strong>${pet.name}</strong><br><span style="font-size:0.78rem;color:var(--gray)">${pet.breed||''}</span></td><td>${speciesEmoji(pet.species)} ${pet.species}</td><td>${new Date(a.submittedAt).toLocaleDateString()}</td><td><span class="status-pill ${cls}">${a.status}</span></td><td style="font-size:0.82rem;color:var(--gray)">${a.adminNotes||a.rejectionReason||'—'}</td></tr>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADMIN
+// ═══════════════════════════════════════════════════════
+function renderAdmin(){
+  const pets=getPets();const apps=getApplications();const users=getUsers();
+  // Stats
+  document.getElementById('adminStats').innerHTML=`
+    <div class="stat-card orange"><div class="num">${pets.filter(p=>p.status==='available').length}</div><div class="label">Available Pets</div></div>
+    <div class="stat-card yellow"><div class="num">${apps.filter(a=>a.status==='pending').length}</div><div class="label">Pending Apps</div></div>
+    <div class="stat-card green"><div class="num">${apps.filter(a=>a.status==='approved').length}</div><div class="label">Approved</div></div>
+    <div class="stat-card teal"><div class="num">${users.filter(u=>u.role==='user').length}</div><div class="label">Registered Users</div></div>
+    <div class="stat-card"><div class="num">${pets.filter(p=>p.status==='adopted').length}</div><div class="label">Adopted</div></div>
+    <div class="stat-card"><div class="num">${apps.length}</div><div class="label">Total Apps</div></div>
+  `;
+  // Applications table
+  const petsMap=Object.fromEntries(pets.map(p=>[p.id,p]));
+  const usersMap=Object.fromEntries(users.map(u=>[u.id,u]));
+  document.getElementById('adminAppsTable').innerHTML=apps.length===0?'<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray-light)">No applications yet</td></tr>':
+    apps.map((a,i)=>{
+      const pet=petsMap[a.petId]||{name:'?',species:'-'};
+      const user=usersMap[a.userId]||{name:'?',email:'-'};
+      const cls={'pending':'pill-pending','reviewing':'pill-reviewing','approved':'pill-approved','rejected':'pill-rejected'}[a.status];
+      return`<tr>
+        <td>${i+1}</td>
+        <td><strong>${a.personalInfo.fullName}</strong><br><span style="font-size:0.75rem;color:var(--gray)">${a.personalInfo.email}</span></td>
+        <td>${pet.name} <span style="color:var(--gray-light);font-size:0.78rem">${speciesEmoji(pet.species)}</span></td>
+        <td>${a.homeEnvironment.housingType||'-'}</td>
+        <td>${new Date(a.submittedAt).toLocaleDateString()}</td>
+        <td><span class="status-pill ${cls}">${a.status}</span></td>
+        <td><div class="action-btns">
+          ${a.status==='pending'?`<button class="action-btn review" onclick="updateApp('${a.id}','reviewing')">Review</button>`:''}
+          ${a.status!=='approved'?`<button class="action-btn approve" onclick="updateApp('${a.id}','approved')">✓ Approve</button>`:''}
+          ${a.status!=='rejected'?`<button class="action-btn reject" onclick="updateApp('${a.id}','rejected')">✗ Reject</button>`:''}
+        </div></td>
+      </tr>`;
+    }).join('');
+  // Pets table
+  document.getElementById('adminPetsTable').innerHTML=pets.map(p=>{
+    const cls={'available':'pill-available','pending':'pill-pending','adopted':'pill-adopted'}[p.status];
+    return`<tr>
+      <td><strong>${p.name}</strong></td>
+      <td>${speciesEmoji(p.species)} ${p.species}</td>
+      <td>${p.breed}</td>
+      <td>${p.age.value} ${p.age.unit}</td>
+      <td>${p.location.city}, ${p.location.state}</td>
+      <td><span class="status-pill ${cls}">${p.status}</span></td>
+      <td><div class="action-btns">
+        <button class="action-btn approve" onclick="updatePetStatus('${p.id}','available')">Available</button>
+        <button class="action-btn reject" onclick="updatePetStatus('${p.id}','adopted')">Adopted</button>
+        <button class="action-btn reject" style="background:#fee2e2;color:#991b1b" onclick="deletePet('${p.id}')">Delete</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  // Users table
+  document.getElementById('adminUsersTable').innerHTML=users.map(u=>`
+    <tr>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.email}</td>
+      <td><span class="status-pill ${u.role==='admin'?'pill-reviewing':'pill-available'}">${u.role}</span></td>
+      <td>${u.createdAt?new Date(u.createdAt).toLocaleDateString():'—'}</td>
+      <td><div class="action-btns">${u.role!=='admin'?`<button class="action-btn review" onclick="promoteUser('${u.id}')">Make Admin</button>`:'<em style="color:var(--gray-light);font-size:0.78rem">Admin</em>'}</div></td>
+    </tr>
+  `).join('');
+}
+function switchAdminTab(tab,btn){
+  document.querySelectorAll('.admin-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['applications','pets','users'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+}
+function updateApp(id,status){
+  const apps=getApplications();const idx=apps.findIndex(a=>a.id===id);if(idx<0)return;
+  apps[idx].status=status;
+  if(status==='approved'){
+    // Update pet to adopted
+    const pets=getPets();const pi=pets.findIndex(p=>p.id===apps[idx].petId);if(pi>-1){pets[pi].status='adopted';savePets(pets);}
+  }
+  if(status==='rejected'){
+    // Free up pet back to available
+    const pets=getPets();const pi=pets.findIndex(p=>p.id===apps[idx].petId);
+    if(pi>-1&&pets[pi].status==='pending'){pets[pi].status='available';savePets(pets);}
+  }
+  saveApplications(apps);toast('Application '+status+'!','success');renderAdmin();
+}
+function updatePetStatus(id,status){
+  const pets=getPets();const idx=pets.findIndex(p=>p.id===id);if(idx<0)return;
+  pets[idx].status=status;savePets(pets);toast('Pet status updated!','success');renderAdmin();
+}
+function deletePet(id){
+  if(!confirm('Delete this pet permanently?'))return;
+  const pets=getPets().filter(p=>p.id!==id);savePets(pets);toast('Pet removed','info');renderAdmin();
+}
+function promoteUser(id){
+  const users=getUsers();const idx=users.findIndex(u=>u.id===id);if(idx<0)return;
+  users[idx].role='admin';saveUsers(users);toast('User promoted to admin','success');renderAdmin();
+}
+
+// ─── Add Pet Modal ───
+function openAddPetModal(){document.getElementById('addPetModal').classList.add('open');}
+function closeAddPetModal(){document.getElementById('addPetModal').classList.remove('open');}
+function adminAddPet(){
+  const name=document.getElementById('ap_name').value.trim();
+  const species=document.getElementById('ap_species').value;
+  const breed=document.getElementById('ap_breed').value.trim();
+  const desc=document.getElementById('ap_desc').value.trim();
+  const gender=document.getElementById('ap_gender').value;
+  const size=document.getElementById('ap_size').value;
+  const city=document.getElementById('ap_city').value.trim();
+  const state=document.getElementById('ap_state').value.trim();
+  if(!name||!species||!breed||!desc||!gender||!size||!city||!state)return toast('Please fill all required fields','error');
+  const traits=document.getElementById('ap_traits').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const imgInput=document.getElementById('ap_img').value.trim();
+  const pet={
+    id:'p'+Date.now(),name,species,breed,
+    age:{value:+document.getElementById('ap_age').value||1,unit:'years'},
+    gender,size,location:{city,state},description:desc,
+    health:{vaccinated:document.getElementById('ap_vacc').checked,spayedNeutered:document.getElementById('ap_sn').checked,microchipped:document.getElementById('ap_micro').checked,specialNeeds:false},
+    traits,
+    primaryImage:imgInput||'https://images.unsplash.com/photo-1444212477490-ca407925329e?w=600&q=80',
+    status:document.getElementById('ap_status').value,
+    createdAt:new Date().toISOString()
+  };
+  const pets=getPets();pets.unshift(pet);savePets(pets);
+  closeAddPetModal();toast('Pet added successfully! 🐾','success');renderAdmin();
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+function toast(msg,type=''){
+  const tc=document.getElementById('toastContainer');
+  const t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');
+  t.textContent=msg;
+  tc.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(100%)';t.style.transition='all 0.3s';setTimeout(()=>t.remove(),300)},3200);
+}
+
+// ─── Close modals on backdrop click ───
+document.getElementById('petModal').addEventListener('click',function(e){if(e.target===this)closePetModal();});
+document.getElementById('authModal').addEventListener('click',function(e){if(e.target===this)closeAuth();});
+document.getElementById('addPetModal').addEventListener('click',function(e){if(e.target===this)closeAddPetModal();});
+
+// ─── Boot ───
+init();
+</script>
+</body>
+</html>

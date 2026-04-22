@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PawsHome — Find Your Forever Friend</title>
+  <meta name="description" content="Browse adorable pets from local shelters, apply for adoption, and track your application — all in one place." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ============================================================
+     TOAST CONTAINER
+     ============================================================ -->
+<div id="toastContainer" aria-live="polite"></div>
+
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="nav-inner">
+
+    <div class="nav-logo" id="navLogo" role="button" tabindex="0" aria-label="PawsHome home">
+      <div class="logo-paw" aria-hidden="true">🐾</div>
+      PawsHome
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">☰</button>
+
+    <div class="nav-links" id="navLinks">
+      <a id="navBrowse" role="button" tabindex="0">Browse Pets</a>
+      <a id="navTrack" data-auth style="display:none" role="button" tabindex="0">My Applications</a>
+      <button id="navAdmin" data-admin style="display:none">Admin</button>
+      <span data-auth style="display:none; font-size:.82rem; color:var(--text-soft); padding:0 6px">
+        Hi, <span class="user-display-name"></span>!
+      </span>
+      <a id="navLogout" data-auth style="display:none" role="button" tabindex="0">Logout</a>
+      <button class="nav-cta" id="navLogin" data-guest>Login / Sign Up</button>
+    </div>
+
+  </div>
+</nav>
+
+
+<!-- ============================================================
+     PAGE: HOME
+     ============================================================ -->
+<div id="home-page" class="page-view active">
+
+  <!-- Hero -->
+  <section class="hero" aria-label="Hero banner">
+    <div class="hero-inner">
+      <div class="hero-pill" aria-hidden="true">🐶 200+ pets find homes every month</div>
+      <h1>Give a Pet a<br><em>Forever Home</em></h1>
+      <p class="hero-sub">
+        Browse hundreds of lovable animals from local shelters and rescues.
+        Every adoption changes a life — yours included.
+      </p>
+      <div class="hero-btns">
+        <button class="btn btn-primary btn-xl" id="heroBrowseBtn">Browse Pets 🐾</button>
+        <button class="btn btn-ghost btn-xl" id="heroSignupBtn">Create Free Account</button>
+      </div>
+      <div class="hero-stats" aria-label="Platform statistics">
+        <div>
+          <span class="hero-stat-num">2,400+</span>
+          <span class="hero-stat-label">Pets Adopted</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">150+</span>
+          <span class="hero-stat-label">Partner Shelters</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">98%</span>
+          <span class="hero-stat-label">Happy Families</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Search Bar -->
+  <section class="search-bar-section" aria-label="Pet search">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍  Search by name, breed, or city…" aria-label="Search pets" />
+      <select id="speciesFilter" aria-label="Filter by species">
+        <option value="">All Species</option>
+        <option value="dog">🐶 Dogs</option>
+        <option value="cat">🐱 Cats</option>
+        <option value="rabbit">🐰 Rabbits</option>
+        <option value="bird">🐦 Birds</option>
+        <option value="hamster">🐹 Hamsters</option>
+        <option value="other">Other</option>
+      </select>
+      <select id="sizeFilter" aria-label="Filter by size">
+        <option value="">Any Size</option>
+        <option value="small">Small</option>
+        <option value="medium">Medium</option>
+        <option value="large">Large</option>
+        <option value="extra-large">Extra Large</option>
+      </select>
+      <select id="genderFilter" aria-label="Filter by gender">
+        <option value="">Any Gender</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+      <input type="text" id="cityFilter" placeholder="📍 City" aria-label="Filter by city" style="max-width:140px" />
+      <button class="btn btn-primary" id="searchBtn" aria-label="Search pets">Search</button>
+    </div>
+  </section>
+
+  <!-- Featured Pets -->
+  <section class="pets-section" aria-label="Featured pets">
+    <div class="container">
+      <div style="margin-bottom:36px">
+        <div class="section-eyebrow">🌟 New Arrivals</div>
+        <h2 class="section-title">Meet Your Future Best Friend</h2>
+        <p class="section-sub">These wonderful pets are looking for a forever home right now.</p>
+      </div>
+      <div class="pets-grid" id="featuredGrid" role="list" aria-label="Featured pets">
+        <!-- Pets injected by JS -->
+      </div>
+      <div style="text-align:center;margin-top:44px">
+        <button class="btn btn-secondary btn-lg" onclick="go('browse-page');loadAllPets()">
+          View All Available Pets →
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-band" aria-label="How adoption works">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:56px">
+        <div class="section-eyebrow" style="background:rgba(255,255,255,.1);color:var(--clay-soft)">Simple Process</div>
+        <h2 class="section-title" style="color:#fff">Adoption in 4 Easy Steps</h2>
+        <p class="section-sub" style="color:rgba(255,255,255,.5)">We made it simple so you can focus on the excitement.</p>
+      </div>
+      <div class="how-grid">
+        <div class="how-step">
+          <div class="how-icon" aria-hidden="true">🔍</div>
+          <h3>1. Browse &amp; Filter</h3>
+          <p>Search by species, size, age, or location. Save your favourites for later.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon" aria-hidden="true">📝</div>
+          <h3>2. Apply Online</h3>
+          <p>Fill out a simple application. No printing or faxing — 100% digital.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon" aria-hidden="true">⏳</div>
+          <h3>3. We Review</h3>
+          <p>Our team checks your application and gets back to you within 2–3 days.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon" aria-hidden="true">🏠</div>
+          <h3>4. Welcome Home!</h3>
+          <p>Once approved, arrange pickup and start your journey together.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">
+          <span style="width:32px;height:32px;background:var(--clay);border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem" aria-hidden="true">🐾</span>
+          PawsHome
+        </div>
+        <p class="footer-tagline">Connecting loving families with animals who need a home. Every adoption makes a difference.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a onclick="go('browse-page');loadAllPets()">Browse Pets</a></li>
+          <li><a onclick="go('auth-page')">Create Account</a></li>
+          <li><a onclick="go('track-page');loadMyApplications()">My Applications</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a>Adoption FAQ</a></li>
+          <li><a>Pet Care Tips</a></li>
+          <li><a>Contact a Shelter</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 PawsHome. Built with ❤️ for animals everywhere.</p>
+    </div>
+  </footer>
+
+</div><!-- /home-page -->
+
+
+<!-- ============================================================
+     PAGE: BROWSE PETS
+     ============================================================ -->
+<div id="browse-page" class="page-view">
+
+  <div style="background:var(--warm-white);border-bottom:1px solid var(--border);padding:28px 24px">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+      <div>
+        <h1 style="font-family:var(--font-display);font-size:2rem;color:var(--bark)">Find a Pet</h1>
+        <p id="browseCount" style="color:var(--text-soft);font-size:.875rem;margin-top:4px">Loading…</p>
+      </div>
+      <!-- Inline filter row for browse page -->
+      <div class="search-bar" style="padding:0">
+        <input type="text" id="browseSearchInput" placeholder="🔍 Search…" aria-label="Search"
+          oninput="document.getElementById('searchInput').value=this.value" />
+        <select aria-label="Species"
+          onchange="document.getElementById('speciesFilter').value=this.value;document.getElementById('searchBtn').click()">
+          <option value="">All Species</option>
+          <option value="dog">🐶 Dogs</option>
+          <option value="cat">🐱 Cats</option>
+          <option value="rabbit">🐰 Rabbits</option>
+          <option value="bird">🐦 Birds</option>
+          <option value="hamster">🐹 Hamsters</option>
+          <option value="other">Other</option>
+        </select>
+        <button class="btn btn-primary" onclick="document.getElementById('searchInput').value=document.getElementById('browseSearchInput').value;document.getElementById('searchBtn').click()">
+          Search
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <section class="pets-section">
+    <div class="container">
+      <div class="pets-grid" id="browseGrid" role="list" aria-label="All pets">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+  </section>
+
+</div><!-- /browse-page -->
+
+
+<!-- ============================================================
+     PAGE: AUTH (Login / Sign Up)
+     ============================================================ -->
+<div id="auth-page" class="page-view">
+  <div class="auth-page-wrap">
+    <div class="auth-card" role="main" aria-label="Authentication">
+
+      <div class="auth-logo">
+        <span class="auth-logo-icon" aria-hidden="true">🐾</span>
+        PawsHome
+      </div>
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs" role="tablist" aria-label="Login or Sign Up">
+        <button class="auth-tab active" data-tab="login"  onclick="switchAuthTab('login')"  role="tab" aria-selected="true">Login</button>
+        <button class="auth-tab"        data-tab="signup" onclick="switchAuthTab('signup')" role="tab" aria-selected="false">Sign Up</button>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginForm" role="tabpanel" aria-label="Login">
+        <form id="loginFormEl" novalidate>
+          <div class="form-group">
+            <label for="loginEmail">Email Address</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:13px">
+            Login →
+          </button>
+        </form>
+        <p style="text-align:center;margin-top:18px;font-size:.84rem;color:var(--text-soft)">
+          No account? <a onclick="switchAuthTab('signup')" style="color:var(--clay);cursor:pointer;font-weight:600">Sign up free</a>
+        </p>
+        <div class="demo-box">
+          <strong>Demo accounts:</strong><br>
+          Admin — admin@pawshome.com / admin123<br>
+          User &nbsp;— sarah@example.com / password123
+        </div>
+      </div>
+
+      <!-- Signup Form -->
+      <div id="signupForm" class="hidden" role="tabpanel" aria-label="Sign Up">
+        <form id="signupFormEl" novalidate>
+          <div class="form-group">
+            <label for="signupName">Full Name <span class="required">*</span></label>
+            <input type="text" id="signupName" placeholder="Jane Smith" required autocomplete="name" />
+          </div>
+          <div class="form-group">
+            <label for="signupEmail">Email Address <span class="required">*</span></label>
+            <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email" />
+          </div>
+          <div class="form-group">
+            <label for="signupPhone">Phone Number</label>
+            <input type="tel" id="signupPhone" placeholder="555-000-0000" autocomplete="tel" />
+          </div>
+          <div class="form-group">
+            <label for="signupPassword">Password <span class="required">*</span></label>
+            <input type="password" id="signupPassword" placeholder="At least 6 characters" required minlength="6" autocomplete="new-password" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:13px">
+            Create Account →
+          </button>
+        </form>
+        <p style="text-align:center;margin-top:18px;font-size:.84rem;color:var(--text-soft)">
+          Already a member? <a onclick="switchAuthTab('login')" style="color:var(--clay);cursor:pointer;font-weight:600">Login</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /auth-page -->
+
+
+<!-- ============================================================
+     PAGE: ADOPTION APPLICATION
+     ============================================================ -->
+<div id="apply-page" class="page-view">
+
+  <div style="background:var(--warm-white);border-bottom:1px solid var(--border);padding:22px 24px">
+    <div class="container">
+      <button class="btn btn-outline btn-sm" onclick="go('browse-page')" aria-label="Go back">← Back</button>
+      <h1 style="font-family:var(--font-display);font-size:1.9rem;color:var(--bark);margin-top:12px">
+        Adopt <span id="adoptingPetName">this Pet</span>
+      </h1>
+      <p style="color:var(--text-soft);font-size:.88rem">
+        Complete the form below. We review applications within 2–3 business days.
+      </p>
+    </div>
+  </div>
+
+  <div style="padding:40px 24px 60px">
+    <div class="form-wrap">
+      <form id="appFormEl" novalidate>
+        <input type="hidden" id="hiddenPetId" />
+
+        <!-- 1. Personal Info -->
+        <div class="form-card">
+          <h3>👤 Personal Information</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appFullName">Full Name <span class="required">*</span></label>
+              <input type="text" id="appFullName" placeholder="Jane Smith" required />
+            </div>
+            <div class="form-group">
+              <label for="appPhone">Phone Number <span class="required">*</span></label>
+              <input type="tel" id="appPhone" placeholder="555-000-0000" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="appEmail">Email <span class="required">*</span></label>
+            <input type="email" id="appEmail" required />
+          </div>
+          <div class="form-group">
+            <label for="appStreet">Street Address <span class="required">*</span></label>
+            <input type="text" id="appStreet" placeholder="123 Oak Street" required />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appCity">City <span class="required">*</span></label>
+              <input type="text" id="appCity" placeholder="Austin" required />
+            </div>
+            <div class="form-group">
+              <label for="appState">State <span class="required">*</span></label>
+              <input type="text" id="appState" placeholder="TX" required />
+            </div>
+          </div>
+          <div class="form-group" style="max-width:200px">
+            <label for="appZip">ZIP Code <span class="required">*</span></label>
+            <input type="text" id="appZip" placeholder="78701" required />
+          </div>
+        </div>
+
+        <!-- 2. Home Environment -->
+        <div class="form-card">
+          <h3>🏠 Home Environment</h3>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appHousingType">Housing Type <span class="required">*</span></label>
+              <select id="appHousingType" required>
+                <option value="">Select…</option>
+                <option value="house">House</option>
+                <option value="apartment">Apartment</option>
+                <option value="condo">Condo</option>
+                <option value="townhouse">Townhouse</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="appAdults">Number of Adults <span class="required">*</span></label>
+              <input type="number" id="appAdults" min="1" max="20" value="1" required />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appChildren">Number of Children</label>
+              <input type="number" id="appChildren" min="0" max="20" value="0" />
+            </div>
+            <div class="form-group">
+              <label for="appChildAges">Children's Ages</label>
+              <input type="text" id="appChildAges" placeholder="e.g. 5, 8, 12" />
+            </div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px;margin-top:6px">
+            <label class="checkbox-label"><input type="checkbox" id="appYard" /><span>We have a fenced yard</span></label>
+            <label class="checkbox-label"><input type="checkbox" id="appRenting" /><span>We are currently renting</span></label>
+            <label class="checkbox-label"><input type="checkbox" id="appLandlord" checked /><span>Landlord allows pets</span></label>
+          </div>
+        </div>
+
+        <!-- 3. Pet Experience -->
+        <div class="form-card">
+          <h3>🐾 Pet Experience</h3>
+          <div class="form-group">
+            <label for="appPrevExp">Describe your history with pets <span class="required">*</span></label>
+            <textarea id="appPrevExp" placeholder="Types of pets, how long you've owned them, training experience…" required></textarea>
+          </div>
+          <label class="checkbox-label" style="margin-bottom:14px">
+            <input type="checkbox" id="appHasPets" />
+            <span>I currently own other pets</span>
+          </label>
+          <div class="form-group">
+            <label for="appCurrentPets">Current pets (if any)</label>
+            <input type="text" id="appCurrentPets" placeholder="e.g. 1 neutered male cat, 3 years old" />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appHoursAlone">Hours alone per day <span class="required">*</span></label>
+              <input type="number" id="appHoursAlone" min="0" max="24" placeholder="4" required />
+            </div>
+            <div class="form-group">
+              <label for="appVetName">Your Veterinarian</label>
+              <input type="text" id="appVetName" placeholder="Dr. Smith Animal Clinic" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Motivation -->
+        <div class="form-card">
+          <h3>💬 Why Do You Want to Adopt?</h3>
+          <div class="form-group">
+            <label for="appWhyAdopt">Tell us about yourself and this pet <span class="required">*</span></label>
+            <textarea id="appWhyAdopt" rows="5" placeholder="What draws you to this pet? What kind of life will you offer them?" required></textarea>
+          </div>
+        </div>
+
+        <!-- 5. Agreements -->
+        <div class="form-card">
+          <h3>✅ Agreements</h3>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <label class="checkbox-label">
+              <input type="checkbox" id="agreeVisit" required />
+              <span>I agree to a home visit if requested by the shelter before or after adoption.</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="agreeFees" required />
+              <span>I understand there may be adoption fees and agree to pay them upon approval.</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="agreeResp" required />
+              <span>I commit to providing proper food, shelter, medical care, and love for the pet's lifetime.</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button type="submit" id="submitAppBtn" class="btn btn-primary btn-lg">🐾 Submit Application</button>
+          <button type="button" class="btn btn-outline btn-lg" onclick="go('browse-page')">Cancel</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div><!-- /apply-page -->
+
+
+<!-- ============================================================
+     PAGE: MY APPLICATIONS (Tracking)
+     ============================================================ -->
+<div id="track-page" class="page-view">
+
+  <div style="background:var(--warm-white);border-bottom:1px solid var(--border);padding:28px 24px">
+    <div class="container">
+      <h1 style="font-family:var(--font-display);font-size:2rem;color:var(--bark)">My Applications</h1>
+      <p style="color:var(--text-soft);font-size:.88rem;margin-top:5px">
+        Track the status of your adoption applications in real time.
+      </p>
+    </div>
+  </div>
+
+  <div style="padding:40px 24px;max-width:820px;margin:0 auto">
+    <div id="myAppsList">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+
+</div><!-- /track-page -->
+
+
+<!-- ============================================================
+     PAGE: ADMIN DASHBOARD
+     ============================================================ -->
+<div id="admin-page" class="page-view">
+  <div class="admin-layout">
+
+    <!-- Sidebar Navigation -->
+    <aside class="admin-sidebar" role="navigation" aria-label="Admin navigation">
+      <div class="admin-sidebar-logo">🐾 PawsHome Admin</div>
+
+      <div class="sidebar-item active" data-panel="overview" onclick="switchAdminPanel('overview')" role="button" tabindex="0">
+        📊 Overview
+      </div>
+      <div class="sidebar-item" data-panel="pets" onclick="switchAdminPanel('pets')" role="button" tabindex="0">
+        🐾 Manage Pets
+      </div>
+      <div class="sidebar-item" data-panel="applications" onclick="switchAdminPanel('applications')" role="button" tabindex="0">
+        📝 Applications
+      </div>
+      <div class="sidebar-item" data-panel="add-pet" onclick="switchAdminPanel('add-pet')" role="button" tabindex="0">
+        ➕ Add New Pet
+      </div>
+      <div class="sidebar-item" onclick="go('home-page');loadFeaturedPets()" style="margin-top:16px;border-top:1px solid rgba(255,255,255,.08)" role="button" tabindex="0">
+        ← Back to Site
+      </div>
+    </aside>
+
+    <!-- Main Admin Content -->
+    <main class="admin-main" role="main">
+
+      <!-- ── Panel: Overview ──────────────────────────────── -->
+      <div id="panel-overview" class="admin-panel active">
+        <h2 class="admin-page-title">Dashboard Overview</h2>
+
+        <div class="stats-grid" aria-label="Statistics">
+          <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true">🐾</div>
+            <span class="stat-num" id="aStat-total">—</span>
+            <div class="stat-label">Total Pets</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true">✅</div>
+            <span class="stat-num" id="aStat-available">—</span>
+            <div class="stat-label">Available</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true">🏠</div>
+            <span class="stat-num" id="aStat-adopted">—</span>
+            <div class="stat-label">Adopted</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true">📝</div>
+            <span class="stat-num" id="aStat-pendApps">—</span>
+            <div class="stat-label">Pending Applications</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" aria-hidden="true">👥</div>
+            <span class="stat-num" id="aStat-users">—</span>
+            <div class="stat-label">Registered Users</div>
+          </div>
+        </div>
+
+        <!-- Excel Export Buttons -->
+        <div class="table-card" style="margin-bottom:24px">
+          <div class="table-card-header">
+            <div class="table-card-title">📥 Export to Excel</div>
+          </div>
+          <div style="padding:20px;display:flex;gap:12px;flex-wrap:wrap">
+            <a class="btn btn-moss" href="/api/export/pets" download>
+              🐾 Export Pets (.xlsx)
+            </a>
+            <a class="btn btn-primary" href="/api/export/applications" download>
+              📝 Export Applications (.xlsx)
+            </a>
+            <a class="btn" style="background:var(--bark);color:#fff;display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;font-size:.875rem;font-weight:600" href="/api/export/full" download>
+              📦 Full Export (.xlsx)
+            </a>
+          </div>
+          <p style="padding:0 20px 16px;font-size:.76rem;color:var(--text-muted)">
+            Downloads open directly in Microsoft Excel. Admin login required.
+          </p>
+        </div>
+
+        <div class="table-card">
+          <div class="table-card-header">
+            <div class="table-card-title">Recent Applications</div>
+            <button class="btn btn-outline btn-sm" onclick="switchAdminPanel('applications')">View All</button>
+          </div>
+          <table class="admin-table" aria-label="Recent applications">
+            <thead>
+              <tr><th>Applicant</th><th>Pet</th><th>Status</th><th>Date</th></tr>
+            </thead>
+            <tbody id="recentAppsBody">
+              <tr><td colspan="4" style="text-align:center;padding:20px">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!-- /panel-overview -->
+
+      <!-- ── Panel: Pets ──────────────────────────────────── -->
+      <div id="panel-pets" class="admin-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+          <h2 class="admin-page-title" style="margin:0">Manage Pets</h2>
+          <button class="btn btn-primary" onclick="switchAdminPanel('add-pet')">+ Add New Pet</button>
+        </div>
+        <div class="table-card">
+          <table class="admin-table" aria-label="Pets list">
+            <thead>
+              <tr><th>Photo</th><th>Name</th><th>Species · Breed</th><th>Location</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="adminPetsBody">
+              <tr><td colspan="6" style="text-align:center;padding:20px">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!-- /panel-pets -->
+
+      <!-- ── Panel: Applications ─────────────────────────── -->
+      <div id="panel-applications" class="admin-panel">
+        <h2 class="admin-page-title">All Applications</h2>
+        <div class="table-card">
+          <table class="admin-table" aria-label="All applications">
+            <thead>
+              <tr><th>Applicant</th><th>Pet</th><th>Status</th><th>Date</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="adminAppsBody">
+              <tr><td colspan="5" style="text-align:center;padding:20px">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div><!-- /panel-applications -->
+
+      <!-- ── Panel: Add Pet ───────────────────────────────── -->
+      <div id="panel-add-pet" class="admin-panel">
+        <h2 class="admin-page-title">Add New Pet</h2>
+        <div style="max-width:680px">
+          <form id="addPetFormEl" novalidate>
+
+            <div class="form-card">
+              <h3>🐾 Basic Details</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="pName">Pet Name <span class="required">*</span></label>
+                  <input type="text" id="pName" placeholder="Buddy" required />
+                </div>
+                <div class="form-group">
+                  <label for="pSpecies">Species <span class="required">*</span></label>
+                  <select id="pSpecies" required>
+                    <option value="">Select…</option>
+                    <option value="dog">Dog</option>
+                    <option value="cat">Cat</option>
+                    <option value="rabbit">Rabbit</option>
+                    <option value="bird">Bird</option>
+                    <option value="hamster">Hamster</option>
+                    <option value="guinea pig">Guinea Pig</option>
+                    <option value="reptile">Reptile</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="pBreed">Breed <span class="required">*</span></label>
+                <input type="text" id="pBreed" placeholder="Golden Retriever" required />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Age <span class="required">*</span></label>
+                  <div style="display:flex;gap:8px">
+                    <input type="number" id="pAgeVal" min="0" placeholder="2" required style="width:72px;flex-shrink:0" aria-label="Age value" />
+                    <select id="pAgeUnit" aria-label="Age unit" style="flex:1">
+                      <option value="weeks">Weeks</option>
+                      <option value="months">Months</option>
+                      <option value="years" selected>Years</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="pGender">Gender <span class="required">*</span></label>
+                  <select id="pGender" required>
+                    <option value="">Select…</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="pSize">Size <span class="required">*</span></label>
+                <select id="pSize" required>
+                  <option value="">Select…</option>
+                  <option value="small">Small</option>
+                  <option value="medium">Medium</option>
+                  <option value="large">Large</option>
+                  <option value="extra-large">Extra Large</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <h3>📍 Location &amp; Photo</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="pCity">City <span class="required">*</span></label>
+                  <input type="text" id="pCity" placeholder="Austin" required />
+                </div>
+                <div class="form-group">
+                  <label for="pState">State <span class="required">*</span></label>
+                  <input type="text" id="pState" placeholder="TX" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="pImageUrl">Photo URL</label>
+                <input type="url" id="pImageUrl" placeholder="https://example.com/photo.jpg" />
+                <small style="font-size:.72rem;color:var(--text-muted)">Paste a direct image link. Leave blank for species default.</small>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <h3>📋 Description &amp; Health</h3>
+              <div class="form-group">
+                <label for="pDesc">Description <span class="required">*</span></label>
+                <textarea id="pDesc" rows="4" placeholder="Describe this pet's personality, habits, and ideal home…" required></textarea>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:18px;margin-top:4px">
+                <label class="checkbox-label"><input type="checkbox" id="pVaccinated" /><span>Vaccinated</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="pSpayed" /><span>Spayed / Neutered</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="pMicrochip" /><span>Microchipped</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="pSpecialNeeds" /><span>Special Needs</span></label>
+              </div>
+              <div class="form-group" style="margin-top:12px">
+                <label for="pSpecialDesc">Special Needs Details</label>
+                <input type="text" id="pSpecialDesc" placeholder="Describe any special care needed…" />
+              </div>
+            </div>
+
+            <button type="submit" id="addPetBtn" class="btn btn-primary btn-lg">➕ Add Pet to Listings</button>
+          </form>
+        </div>
+      </div><!-- /panel-add-pet -->
+
+    </main>
+  </div>
+</div><!-- /admin-page -->
+
+
+<!-- ============================================================
+     PET DETAIL MODAL
+     ============================================================ -->
+<div id="petModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-label="Pet details">
+  <div class="modal">
+    <div id="petModalContent">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+
+<!-- Load JS last for best performance -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
